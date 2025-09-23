@@ -13,111 +13,73 @@
 </head>
 <body>
 	<br />
-	<div class="conteiner" align="center">
-		<h1>Cadastro de Clientes</h1>
-		<br />
-		<form action="cliente" method="post">
-			<table>
-				<tr>
-					<td colspan="3">
-						<input type="number" min="1" step="1"
-						id="cpf" name="cpf" placeholder="#CPF"
-						value='<c:out value="${cliente.cpf}"/>'
-						class="input-group input-group-lg" >
-					</td>
-					<td colspan="1">
-						<input type="submit"
-						id="botao" name="botao" value="Buscar"
-						class="btn btn-dark">
-					</td>				
-				</tr>		
-				<tr>
-					<td colspan="4">
-						<input type="text" 
-						id="nome" name="nome" placeholder="Nome"
-						value='<c:out value="${cliente.nome}"/>'
-						class="input-group input-group-lg">
-					</td>
-				</tr>
-				<tr>
-					<td colspan="4">
-						<input type="date" 
-						id="primeira_conta" name="primeira_conta" placeholder="Data da Primeira Conta"
-						value='<c:out value="${cliente.primeiraConta}"/>'
-						class="input-group input-group-lg">
-					</td>
-				</tr>
-				<tr>
-					<td colspan="3">
-						<input type="password"
-						id="senha" name="senha" placeholder="Senha" maxLength="8"
-						value='<c:out value="${cliente.senha}"/>'
-						class="input-group input-group-lg" >
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<input type="submit"
-						id="botao" name="botao" value="Inserir"
-						class="btn btn-dark">
-					</td>								
-					<td>
-						<input type="submit"
-						id="botao" name="botao" value="Atualizar"
-						class="btn btn-dark">
-					</td>								
-					<td>
-						<input type="submit"
-						id="botao" name="botao" value="Excluir"
-						class="btn btn-dark">
-					</td>								
-					<td>
-						<input type="submit"
-						id="botao" name="botao" value="Listar"
-						class="btn btn-dark">
-					</td>								
-				</tr>
-			</table>
-		</form>
-	</div>
-	<br />
-	<div class="conteiner" align="center">
-		<c:if test="${not empty saida}">
-			<h2 style="color: blue;"><c:out value="${saida}" /></h2>
-		</c:if>
-	</div>
-	<div class="conteiner" align="center">
-		<c:if test="${not empty erro}">
-			<h2 style="color: red;"><c:out value="${erro}" /></h2>
-		</c:if>
-	</div>
-	<div class="conteiner" align="center">
-		<c:if test="${not empty clientes}">
-			<table class="table table-dark table-striped">
-				<thead>
-					<tr>
-						<th>#CPF</th>
-						<th>Nome</th>
-						<th>Primeira Conta</th>
-						<th>Senha</th>
-						<th></th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					<c:forEach var="c" items="${clientes}">
-						<tr>
-							<td>${c.cpf}</td>
-							<td>${c.nome}</td>
-							<td>${c.primeiraConta}</td>
-							<td>${c.senha}</td>
-							<td><a href="${pageContext.request.contextPath}/cliente?acao=editar&cpf=${c.cpf}">EDITAR</a></td>
-							<td><a href="${pageContext.request.contextPath}/cliente?acao=excluir&cpf=${c.cpf}">EXCLUIR</a></td>
-						</tr>
-					</c:forEach>
-				</tbody>
-			</table>
-		</c:if>
+	<div align="center">
+		<table border="1">
+			<tr>
+				<td><a href="index">INICIO</a></td>
+				<td><a href="${pageContext.request.contextPath}/cliente?editar=true&usuario=${user}">ATUALIZAR CLIENTE</a></td>
+				<td><a href="${pageContext.request.contextPath}/conta?usuario=${user}">VISUALIZAR CONTAS</a></td>
+			</tr>
+			<c:if test="${editar}">
+							<div class="conteiner" align="center">
+					<h1>Atualizar Cliente</h1>
+					<br />
+					<form action="pessoa" method="post">
+						<table>
+							<tr>
+								<td colspan="3">
+									<input type="number" min="1" step="1"
+									id="cpf" name="cpf" placeholder="#CPF"
+									value='<c:out value="${cliente.cpf}"/>'
+									class="input-group input-group-lg" >
+								</td>
+								<td colspan="1">
+									<input type="submit"
+									id="botao" name="botao" value="Buscar"
+									class="btn btn-dark">
+								</td>				
+							</tr>		
+							<tr>
+								<td colspan="4">
+									<input type="text" 
+									id="nome" name="nome" placeholder="Nome"
+									value='<c:out value="${cliente.nome}"/>'
+									class="input-group input-group-lg">
+								</td>
+							</tr>
+							<tr>
+								<td colspan="4">
+									<input type="date" 
+									id="data_primeira_conta" name="data_primeira_conta"
+									value='<c:out value="${cliente.dataPrimeiraConta}"/>'
+									class="input-group input-group-lg">
+								</td>
+							</tr>
+							<tr>
+								<td colspan="4">
+									<input type="password" 
+									id="senha" name="senha" placeholder="E-mail"
+									value='<c:out value="${cliente.senha}"/>'
+									class="input-group input-group-lg">
+								</td>
+							</tr>
+							<tr>								
+								<td colspan="2">
+									<input type="submit"
+									id="botao" name="botao" value="Atualizar"
+									class="btn btn-dark">
+								</td>								
+								<td colspan="2">
+									<input type="submit"
+									id="botao" name="botao" value="Excluir"
+									class="btn btn-dark">
+								</td>											
+							</tr>
+						</table>
+					</form>
+				</div>
+			</c:if>
+		</table>
 	</div>
 </body>
 </html>

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Agencia {
 	
-	private int codigo;
+	private long codigo;
 	private String nome;
 	private String cep;
 	private String cidade;

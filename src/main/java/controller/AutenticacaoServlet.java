@@ -1,7 +1,7 @@
 package controller;
 
 import java.io.IOException;
-import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,40 +11,60 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.Agencia;
-// import persistence.GenericDao;
-// import persistence.AgenciaDao;
+import model.Cliente;
 
-@WebServlet("/agencia")
-public class AgenciaServlet extends HttpServlet {
+@WebServlet("/autenticacao")
+public class AutenticacaoServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    public AgenciaServlet() {
+    public AutenticacaoServlet() {
         super();
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String acao = request.getParameter("acao");
-		String codigo = request.getParameter("codigo");
+		String cpf = request.getParameter("cpf");
+		String auth = request.getParameter("auth");
 		
-		System.out.println(acao + " get");
-		Agencia a = new Agencia();
+		System.out.println(auth);
+		
+		Cliente cli = new Cliente();
 		String erro = "";
-		List<Agencia> agencias = new ArrayList<>();
+		List<Cliente> clientes = new ArrayList<>();
 		
 		try {
 			
+			// GenericDao gDao = new GenericDao();
+			// ClienteDao cliDao = new ClienteDao(gDao);
+			// clientes = cliDao.listar();
+			if (acao != null) {
+				cli.setCpf(cpf);
+				
+/*	private String cpf;
+	private String nome;
+	private LocalDate dataPrimeiraConta;
+	private String senha;*/
+				
+				if (acao.equalsIgnoreCase("excluir")) {
+					// cliDao.excluir(a);
+					// clientes = cliDao.listar();
+					cli = null;
+				} else {
+					// cli = aDao.buscar(cli);
+					clientes = null;
+				}
+			}
 			
 			
 		} catch (Exception e) {
 			erro = e.getMessage();
 		} finally {
 			request.setAttribute("erro", erro);
-			request.setAttribute("agencia", a);
-			request.setAttribute("agencias", agencias);
-
+			request.setAttribute("cliente", cli);
+			request.setAttribute("clientes", clientes);
+			request.setAttribute("auth", auth);
 			RequestDispatcher dispatcher = 
-					request.getRequestDispatcher("agencia.jsp");
+					request.getRequestDispatcher("autenticacao.jsp");
 			dispatcher.forward(request, response);
 
 		}
@@ -53,49 +73,47 @@ public class AgenciaServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String saida = "";
 		String erro = "";
-		List<Agencia> agencias = new ArrayList<Agencia>();
-		Agencia a = new Agencia();
+		List<Cliente> clientes = new ArrayList<Cliente>();
+		Cliente cli = new Cliente();
 		String cmd = "";
 		
-		String acao = request.getParameter("acao");
 		
-		System.out.println(acao);
 		try {
-			String id = request.getParameter("id");
+			String cpf = request.getParameter("cpf");
 			String nome = request.getParameter("nome");
-			String cep = request.getParameter("cep");
-			String cidade = request.getParameter("cidade");
+			String primeiraConta = request.getParameter("primeira_conta");
+			String senha = request.getParameter("senha");
 			cmd = request.getParameter("botao");
 			
 			if (!cmd.equalsIgnoreCase("Listar")) {
-				a.setCodigo(Integer.parseInt(id));
+				cli.setCpf(cpf);
 			}
 			if (cmd.equalsIgnoreCase("Inserir") || cmd.equalsIgnoreCase("Atualizar")) {
-				a.setNome(nome);
-				a.setCep(cep);
-				a.setCidade(cidade);
+				cli.setNome(nome);
+				cli.setDataPrimeiraConta(LocalDate.parse(primeiraConta));
+				cli.setSenha(senha);
 			}
 			
 			//GenericDao gDao = new GenericDao();
-			//AgenciaDao aDao = new AgenciaDao(gDao);
+			//AgenciaDao cliDao = new ClienteDao(gDao);
 			
 			if (cmd.equalsIgnoreCase("Inserir")) {
-				//aDao.inserir(a);
-				//saida = "Agencia "+a.getNome()+" inserida com sucesso";
+				//cliDao.inserir(cli);
+				//saida = "Cliente "+cli.getNome()+" inserido com sucesso";
 			}
 			if (cmd.equalsIgnoreCase("Atualizar")) {
-				//aDao.atualizar(a);
-				//saida = "Agencia "+a.getNome()+" modifcada com sucesso";
+				//cliDao.atualizar(cli);
+				//saida = "Cliente "+cli.getNome()+" modifcado com sucesso";
 			}
 			if (cmd.equalsIgnoreCase("Excluir")) {
-				//aDao.excluir(a);
-				//saida = "Agencia "+a.getCodigo()+" excluida com sucesso";
+				//cliDao.excluir(cli);
+				//saida = "Cliente "+cli.getCpf()+" excluida com sucesso";
 			}
 			if (cmd.equalsIgnoreCase("Buscar")) {
-				//a = aDao.buscar(a);
+				//cli = cliDao.buscar(cli);
 			}
 			if (cmd.equalsIgnoreCase("Listar")) {
-				//pessoas = aDao.listar();
+				//clientes = cliDao.listar();
 			}
 
 		} catch (Exception e) {
@@ -106,18 +124,18 @@ public class AgenciaServlet extends HttpServlet {
 			}
 		} finally {
 			if (!cmd.equalsIgnoreCase("Buscar")) {
-				a = null;
+				cli = null;
 			}
 			if (!cmd.equalsIgnoreCase("Listar")) {
-				agencias = null;
+				clientes = null;
 			}
 			request.setAttribute("erro", erro);
 			request.setAttribute("saida", saida);
-			request.setAttribute("agencia", a);
-			request.setAttribute("agencias", agencias);
+			request.setAttribute("cliente", cli);
+			request.setAttribute("clientes", clientes);
 
 			RequestDispatcher dispatcher = 
-					request.getRequestDispatcher("agencia.jsp");
+					request.getRequestDispatcher("autenticacao.jsp");
 			dispatcher.forward(request, response);
 		}
 		

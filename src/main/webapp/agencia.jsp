@@ -22,7 +22,7 @@
 					<td colspan="3">
 						<input type="number" min="1" step="1"
 						id="id" name="id" placeholder="#ID"
-						value='<c:out value="${agencia.id}"/>'
+						value='<c:out value="${agencia.codigo}"/>'
 						class="input-group input-group-lg" >
 					</td>
 					<td colspan="1">

@@ -1,40 +1,118 @@
 package persistence;
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import model.Cliente;
+import model.Conta;
 
-public class ClienteDao implements ICrud<Cliente> {
+public class ClienteDao {
 
-	@Override
-	public Cliente buscar(Cliente t) throws SQLException, ClassNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+	private GenericDao gDao;
+
+	public ClienteDao(GenericDao gDao) {
+		this.gDao = gDao;
 	}
+	
+	public Cliente buscar(Cliente cliente) throws SQLException, ClassNotFoundException {
+		Connection c = gDao.getConnection();
+		String sql = "SELECT cpf, nome, dataPrimeiraConta, senha FROM cliente WHERE cpf = ?";
+		PreparedStatement ps = c.prepareStatement(sql);
+		ps.setString(1,cliente.getCpf());
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()) {
+			cliente.setCpf(rs.getString("CPF"));
+			cliente.setNome(rs.getString("Nome"));
+			cliente.setDataPrimeiraConta(LocalDate.parse(rs.getString("dataPrimeiraConta")));
+			cliente.setSenha(rs.getString("senha"));
+		}
+		rs.close();
+		ps.close();
+		return cliente;
+	}
+	
+//	private String cpf;
+//	private String nome;
+//	private LocalDate dataPrimeiraConta;
+//	private String senha;
+//	cpf						VARCHAR(11)		NOT NULL,
+//	nome					VARCHAR(100)	NOT NULL,
+//	dataPrimeiraConta		DATE			        ,
+//	senha					VARCHAR(8)		NOT NULL
 
-	@Override
 	public List<Cliente> listar() throws SQLException, ClassNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		List<Cliente> clientes = new ArrayList<>();
+		Connection c = gDao.getConnection();
+		String sql = "SELECT cpf, nome, dataPrimeiraConta, senha FROM cliente";
+		PreparedStatement ps = c.prepareStatement(sql);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			Cliente cliente = new Cliente();
+			cliente.setCpf(rs.getString("CPF"));
+			cliente.setNome(rs.getString("Nome"));
+			cliente.setDataPrimeiraConta(LocalDate.parse(rs.getString("dataPrimeiraConta")));
+			cliente.setSenha(rs.getString("senha"));
+			
+			clientes.add(cliente);
+		}
+		rs.close();
+		ps.close();
+		return clientes;
 	}
 
-	@Override
-	public String inserir(Cliente t) throws SQLException, ClassNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+	public String inserir(Cliente cliente, Conta conta, String tipoConta) throws SQLException, ClassNotFoundException {
+		Connection c = gDao.getConnection();
+		String sql = "{CALL sp_inserir_cliente(?,?,?,?,?,?,?)}";
+		CallableStatement cs = c.prepareCall(sql);
+		cs.setString(1, cliente.getCpf());
+		cs.setString(2, cliente.getNome());
+		cs.setString(3, cliente.getSenha());
+		cs.setString(4, tipoConta);
+		cs.setLong(5, conta.getCodigoAgencia());
+		cs.registerOutParameter(6, Types.VARCHAR);
+		cs.execute();
+		
+		String saida = cs.getString(6);
+		cs.close();
+		
+		return saida;
 	}
-
-	@Override
-	public String atualizar(Cliente t) throws SQLException, ClassNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public String atualizar(Cliente cliente) throws SQLException, ClassNotFoundException {
+		Connection c = gDao.getConnection();
+		String sql = "{CALL sp_atualizar_cliente(?,?,?)}";
+		CallableStatement cs = c.prepareCall(sql);
+		cs.setString(1, cliente.getCpf());
+		cs.setString(2, cliente.getSenha());
+		cs.registerOutParameter(3, Types.VARCHAR);
+		cs.execute();
+		
+		String saida = cs.getString(3);
+		cs.close();
+		
+		return saida;
 	}
-
-	@Override
-	public String excluir(Cliente t) throws SQLException, ClassNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public String excluir(Cliente cliente, Conta conta) throws SQLException, ClassNotFoundException {
+		Connection c = gDao.getConnection();
+		String sql = "{CALL sp_excluir_cliente(?,?,?)}";
+		CallableStatement cs = c.prepareCall(sql);
+		cs.setString(1, cliente.getCpf());
+		cs.setLong(2, conta.getCodigo());
+		cs.registerOutParameter(3, Types.VARCHAR);
+		cs.execute();
+		
+		String saida = cs.getString(3);
+		cs.close();
+		
+		return saida;
 	}
 
 }

@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,34 +11,33 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.Cliente;
-// import persistence.GenericDao;
-// import persistence.ClienteDao;
+import model.ContaCorrente;
 
-@WebServlet("/cliente")
-public class ClienteServlet extends HttpServlet {
+@WebServlet("/conta")
+public class ContaServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    public ClienteServlet() {
+    public ContaServlet() {
         super();
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String acao = request.getParameter("acao");
-		String cpf = request.getParameter("cpf");
-		String editar = request.getParameter("editar");
+		String codigo = request.getParameter("codigo");
 		
-		Cliente cli = new Cliente();
+		System.out.println("Teste");
+		
+		ContaCorrente cco = new ContaCorrente();
 		String erro = "";
-		List<Cliente> clientes = new ArrayList<>();
+		List<ContaCorrente> ccos = new ArrayList<>();
 		
 		try {
 			
 			// GenericDao gDao = new GenericDao();
-			// ClienteDao cliDao = new ClienteDao(gDao);
-			// clientes = cliDao.listar();
+			// ContaCorrenteDao ccoDao = new ContaCorrenteDao(gDao);
+			// contas = ccoDao.listar();
 			if (acao != null) {
-				cli.setCpf(cpf);
+				cco.setCodigo(Integer.parseInt(codigo));
 				
 /*	private String cpf;
 	private String nome;
@@ -47,12 +45,12 @@ public class ClienteServlet extends HttpServlet {
 	private String senha;*/
 				
 				if (acao.equalsIgnoreCase("excluir")) {
-					// cliDao.excluir(a);
-					// clientes = cliDao.listar();
-					cli = null;
+					// ccoDao.excluir(cco);
+					// ccos = ccoDao.listar();
+					cco = null;
 				} else {
-					// cli = aDao.buscar(cli);
-					clientes = null;
+					// cco = ccoDao.buscar(cco);
+					ccos = null;
 				}
 			}
 			
@@ -60,13 +58,21 @@ public class ClienteServlet extends HttpServlet {
 		} catch (Exception e) {
 			erro = e.getMessage();
 		} finally {
+			cco = new ContaCorrente();
+			cco.setCodigo(1323133221);
+			cco.setCodigoAgencia(1);
+			cco.setDataAbertura(LocalDate.now());
+			cco.setLimiteCredito(21.21);
+			cco.setSaldo(21.21);
+			ccos.add(cco);
 			request.setAttribute("erro", erro);
-			request.setAttribute("cliente", cli);
-			request.setAttribute("clientes", clientes);
-			request.setAttribute("editar", editar);
-			
+			request.setAttribute("conta_corrente", cco);
+			request.setAttribute("contas_correntes", ccos);
+			request.setAttribute("teste", "1234");
+
+			System.out.println(ccos);
 			RequestDispatcher dispatcher = 
-					request.getRequestDispatcher("cliente.jsp");
+					request.getRequestDispatcher("conta.jsp");
 			dispatcher.forward(request, response);
 
 		}
@@ -75,47 +81,47 @@ public class ClienteServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String saida = "";
 		String erro = "";
-		List<Cliente> clientes = new ArrayList<Cliente>();
-		Cliente cli = new Cliente();
+		List<ContaCorrente> ccos = new ArrayList<ContaCorrente>();
+		ContaCorrente cco = new ContaCorrente();
 		String cmd = "";
 		
 		
 		try {
-			String cpf = request.getParameter("cpf");
-			String nome = request.getParameter("nome");
-			String primeiraConta = request.getParameter("primeira_conta");
-			String senha = request.getParameter("senha");
+			String codigo = request.getParameter("codigo");
+			String dataAbertura = request.getParameter("data_abertura");
+			String saldo = request.getParameter("saldo");
+			String limiteCredito = request.getParameter("limite_credito");
 			cmd = request.getParameter("botao");
 			
 			if (!cmd.equalsIgnoreCase("Listar")) {
-				cli.setCpf(cpf);
+				cco.setCodigo(Integer.parseInt(codigo));
 			}
 			if (cmd.equalsIgnoreCase("Inserir") || cmd.equalsIgnoreCase("Atualizar")) {
-				cli.setNome(nome);
-				cli.setDataPrimeiraConta(LocalDate.parse(primeiraConta));
-				cli.setSenha(senha);
+				cco.setDataAbertura(LocalDate.parse(dataAbertura));
+				cco.setSaldo(Double.parseDouble(saldo));
+				cco.setLimiteCredito(Double.parseDouble(limiteCredito));
 			}
 			
 			//GenericDao gDao = new GenericDao();
-			//AgenciaDao cliDao = new ClienteDao(gDao);
+			//AgenciaDao ccoDao = new ContaCorrenteDao(gDao);
 			
 			if (cmd.equalsIgnoreCase("Inserir")) {
-				//cliDao.inserir(cli);
-				//saida = "Cliente "+cli.getNome()+" inserido com sucesso";
+				//ccoDao.inserir(cco);
+				//saida = "Conta "+cco.getCodigo()+" inserida com sucesso";
 			}
 			if (cmd.equalsIgnoreCase("Atualizar")) {
-				//cliDao.atualizar(cli);
-				//saida = "Cliente "+cli.getNome()+" modifcado com sucesso";
+				//ccoDao.atualizar(cco);
+				//saida = "Conta "+cco.getCodigo()+" modifcada com sucesso";
 			}
 			if (cmd.equalsIgnoreCase("Excluir")) {
-				//cliDao.excluir(cli);
-				//saida = "Cliente "+cli.getCpf()+" excluida com sucesso";
+				//ccoDao.excluir(cco);
+				//saida = "Conta "+cco.getCodigo()+" excluida com sucesso";
 			}
 			if (cmd.equalsIgnoreCase("Buscar")) {
-				//cli = cliDao.buscar(cli);
+				//cco = ccoDao.buscar(cco);
 			}
 			if (cmd.equalsIgnoreCase("Listar")) {
-				//clientes = cliDao.listar();
+				//ccos = ccoDao.listar();
 			}
 
 		} catch (Exception e) {
@@ -126,18 +132,18 @@ public class ClienteServlet extends HttpServlet {
 			}
 		} finally {
 			if (!cmd.equalsIgnoreCase("Buscar")) {
-				cli = null;
+				cco = null;
 			}
 			if (!cmd.equalsIgnoreCase("Listar")) {
-				clientes = null;
+				ccos = null;
 			}
 			request.setAttribute("erro", erro);
 			request.setAttribute("saida", saida);
-			request.setAttribute("cliente", cli);
-			request.setAttribute("clientes", clientes);
+			request.setAttribute("conta_corrente", cco);
+			request.setAttribute("contas_correntes", ccos);
 
 			RequestDispatcher dispatcher = 
-					request.getRequestDispatcher("cliente.jsp");
+					request.getRequestDispatcher("conta.jsp");
 			dispatcher.forward(request, response);
 		}
 		

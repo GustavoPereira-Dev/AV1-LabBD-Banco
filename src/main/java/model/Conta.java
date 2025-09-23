@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public abstract class Conta {
 	
-	private int codigo;
+	private long codigo;
+	private long codigoAgencia;
 	private LocalDate dataAbertura;
 	private double saldo;
 

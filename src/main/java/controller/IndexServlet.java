@@ -12,34 +12,38 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.Cliente;
+import model.Conta;
+import model.ContaPoupanca;
 // import persistence.GenericDao;
-// import persistence.ClienteDao;
+// import persistence.ContaPoupancaDao;
 
-@WebServlet("/cliente")
-public class ClienteServlet extends HttpServlet {
+@WebServlet("/index")
+public class IndexServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    public ClienteServlet() {
+    public IndexServlet() {
         super();
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String acao = request.getParameter("acao");
-		String cpf = request.getParameter("cpf");
-		String editar = request.getParameter("editar");
+		String codigo = request.getParameter("codigo");
 		
-		Cliente cli = new Cliente();
+		String auth = request.getParameter("auth");
+		
+		System.out.println(auth + " Index ");
+		
+		ContaPoupanca cpo = new ContaPoupanca();
 		String erro = "";
-		List<Cliente> clientes = new ArrayList<>();
+		List<ContaPoupanca> cpos = new ArrayList<>();
 		
 		try {
 			
 			// GenericDao gDao = new GenericDao();
-			// ClienteDao cliDao = new ClienteDao(gDao);
-			// clientes = cliDao.listar();
+			// ContaPoupancaDao cpoDao = new ContaPoupancaDao(gDao);
+			// cpos = cpoDao.listar();
 			if (acao != null) {
-				cli.setCpf(cpf);
+				cpo.setCodigo(Integer.parseInt(codigo));
 				
 /*	private String cpf;
 	private String nome;
@@ -47,12 +51,12 @@ public class ClienteServlet extends HttpServlet {
 	private String senha;*/
 				
 				if (acao.equalsIgnoreCase("excluir")) {
-					// cliDao.excluir(a);
-					// clientes = cliDao.listar();
-					cli = null;
+					// cpoDao.excluir(cpo);
+					// cpos = cpoDao.listar();
+					cpo = null;
 				} else {
-					// cli = aDao.buscar(cli);
-					clientes = null;
+					// cpo = cpoDao.buscar(cpo);
+					cpos = null;
 				}
 			}
 			
@@ -61,12 +65,11 @@ public class ClienteServlet extends HttpServlet {
 			erro = e.getMessage();
 		} finally {
 			request.setAttribute("erro", erro);
-			request.setAttribute("cliente", cli);
-			request.setAttribute("clientes", clientes);
-			request.setAttribute("editar", editar);
-			
+			request.setAttribute("conta_poupanca", cpo);
+			request.setAttribute("contas_poupancas", cpos);
+
 			RequestDispatcher dispatcher = 
-					request.getRequestDispatcher("cliente.jsp");
+					request.getRequestDispatcher("contapoupanca.jsp");
 			dispatcher.forward(request, response);
 
 		}
@@ -75,47 +78,52 @@ public class ClienteServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String saida = "";
 		String erro = "";
-		List<Cliente> clientes = new ArrayList<Cliente>();
-		Cliente cli = new Cliente();
+		List<ContaPoupanca> cpos = new ArrayList<ContaPoupanca>();
+		ContaPoupanca cpo = new ContaPoupanca();
 		String cmd = "";
 		
+		String auth = request.getParameter("auth");
+		
+		System.out.println(auth + " Index ");
 		
 		try {
-			String cpf = request.getParameter("cpf");
-			String nome = request.getParameter("nome");
-			String primeiraConta = request.getParameter("primeira_conta");
-			String senha = request.getParameter("senha");
+			String codigo = request.getParameter("codigo");
+			String dataAbertura = request.getParameter("data_abertura");
+			String saldo = request.getParameter("saldo");
+			String percentualRendimento = request.getParameter("percentual_rendimento");
+			String diaAniversario = request.getParameter("dia_aniversario");
 			cmd = request.getParameter("botao");
 			
 			if (!cmd.equalsIgnoreCase("Listar")) {
-				cli.setCpf(cpf);
+				cpo.setCodigo(Integer.parseInt(codigo));
 			}
 			if (cmd.equalsIgnoreCase("Inserir") || cmd.equalsIgnoreCase("Atualizar")) {
-				cli.setNome(nome);
-				cli.setDataPrimeiraConta(LocalDate.parse(primeiraConta));
-				cli.setSenha(senha);
+				cpo.setDataAbertura(LocalDate.parse(dataAbertura));
+				cpo.setSaldo(Double.parseDouble(saldo));
+				cpo.setPercentualRendimento(Double.parseDouble(percentualRendimento));
+				cpo.setDiaAniversario(LocalDate.parse(diaAniversario));
 			}
 			
 			//GenericDao gDao = new GenericDao();
-			//AgenciaDao cliDao = new ClienteDao(gDao);
+			//ContaPoupancaDao cpoDao = new ContaPoupancaDao(gDao);
 			
 			if (cmd.equalsIgnoreCase("Inserir")) {
-				//cliDao.inserir(cli);
-				//saida = "Cliente "+cli.getNome()+" inserido com sucesso";
+				//cpoDao.inserir(cpo);
+				//saida = "Conta "+cpo.getCodigo()+" inserida com sucesso";
 			}
 			if (cmd.equalsIgnoreCase("Atualizar")) {
-				//cliDao.atualizar(cli);
-				//saida = "Cliente "+cli.getNome()+" modifcado com sucesso";
+				//cpoDao.atualizar(cpo);
+				//saida = "Conta "+cpo.getCodigo()+" modifcada com sucesso";
 			}
 			if (cmd.equalsIgnoreCase("Excluir")) {
-				//cliDao.excluir(cli);
-				//saida = "Cliente "+cli.getCpf()+" excluida com sucesso";
+				//cpoDao.excluir(cpo);
+				//saida = "Conta "+cpo.getCodigo()+" excluida com sucesso";
 			}
 			if (cmd.equalsIgnoreCase("Buscar")) {
-				//cli = cliDao.buscar(cli);
+				//cpo = cpoDao.buscar(cpo);
 			}
 			if (cmd.equalsIgnoreCase("Listar")) {
-				//clientes = cliDao.listar();
+				//cpos = cpoDao.listar();
 			}
 
 		} catch (Exception e) {
@@ -126,18 +134,18 @@ public class ClienteServlet extends HttpServlet {
 			}
 		} finally {
 			if (!cmd.equalsIgnoreCase("Buscar")) {
-				cli = null;
+				cpo = null;
 			}
 			if (!cmd.equalsIgnoreCase("Listar")) {
-				clientes = null;
+				cpos = null;
 			}
 			request.setAttribute("erro", erro);
 			request.setAttribute("saida", saida);
-			request.setAttribute("cliente", cli);
-			request.setAttribute("clientes", clientes);
+			request.setAttribute("conta_poupanca", cpo);
+			request.setAttribute("contas_poupancas", cpos);
 
 			RequestDispatcher dispatcher = 
-					request.getRequestDispatcher("cliente.jsp");
+					request.getRequestDispatcher("contapoupanca.jsp");
 			dispatcher.forward(request, response);
 		}
 		

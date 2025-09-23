@@ -4,14 +4,13 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Aula Java Web Maven</title>
+<title>Avaliacao Banco AV1</title>
 <link rel="icon" href="${pageContext.request.contextPath}/favicon.png">
 </head>
 <body>
 	<div align="center">
-		<h1>Primeira Aula Java Web com Maven e SQL Server</h1>
-		<br />
-		<a href="${pageContext.request.contextPath}/pessoa">PESSOA</a>
+		<h1>Avaliacao de Banco e Instituicoes</h1>
+		<jsp:include page="menu.jsp" />
 	</div>
 </body>
 </html>
