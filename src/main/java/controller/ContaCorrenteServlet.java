@@ -37,7 +37,7 @@ public class ContaCorrenteServlet extends HttpServlet {
 			// ContaCorrenteDao ccoDao = new ContaCorrenteDao(gDao);
 			// contas = ccoDao.listar();
 			if (acao != null) {
-				cco.setCodigo(Integer.parseInt(codigo));
+				cco.setCodigo(codigo);
 				
 /*	private String cpf;
 	private String nome;
@@ -85,7 +85,7 @@ public class ContaCorrenteServlet extends HttpServlet {
 			cmd = request.getParameter("botao");
 			
 			if (!cmd.equalsIgnoreCase("Listar")) {
-				cco.setCodigo(Integer.parseInt(codigo));
+				cco.setCodigo(codigo);
 			}
 			if (cmd.equalsIgnoreCase("Inserir") || cmd.equalsIgnoreCase("Atualizar")) {
 				cco.setDataAbertura(LocalDate.parse(dataAbertura));

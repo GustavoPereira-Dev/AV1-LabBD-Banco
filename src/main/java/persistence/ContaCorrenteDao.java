@@ -12,6 +12,7 @@ import java.util.List;
 
 import model.Cliente;
 import model.ContaCorrente;
+import model.ContaPoupanca;
 
 public class ContaCorrenteDao {
 
@@ -23,12 +24,13 @@ public class ContaCorrenteDao {
 	
 	public ContaCorrente buscar(ContaCorrente conta) throws SQLException, ClassNotFoundException {
 		Connection c = gDao.getConnection();
-		String sql = "SELECT contaCodigo, dataAbertura, saldo, agenciaCodigo, limiteCredito FROM ContaCorrente WHERE contaCodigo = ?";
+		// String sql = "SELECT contaCodigo, dataAbertura, saldo, agenciaCodigo, limiteCredito FROM ContaCorrente WHERE contaCodigo = ?";
+		String sql = "SELECT c.codigo, c.dataAbertura, c.saldo, c.agenciaCodigo, cc.limiteCredito FROM ContaCorrente cc INNER JOIN Conta c ON cc.contaCodigo = c.codigo WHERE c.codigo IN (SELECT contaCodigo FROM ContaCliente WHERE clienteCpf = ?)";
 		PreparedStatement ps = c.prepareStatement(sql);
-		ps.setLong(1,conta.getCodigo());
+		ps.setString(1,conta.getCodigo());
 		ResultSet rs = ps.executeQuery();
 		if (rs.next()) {
-			conta.setCodigo(rs.getLong("contaCodigo"));
+			conta.setCodigo(rs.getString("contaCodigo"));
 			conta.setDataAbertura(LocalDate.parse(rs.getString("dataAbertura")));
 			conta.setSaldo(Double.parseDouble(rs.getString("saldo")));
 			conta.setCodigoAgencia(rs.getLong("agenciaCodigo"));
@@ -39,6 +41,29 @@ public class ContaCorrenteDao {
 		return conta;
 	}
 
+	public List<ContaCorrente> listar(Cliente cliente) throws SQLException, ClassNotFoundException {
+		List<ContaCorrente> contas = new ArrayList<ContaCorrente>();
+		Connection c = gDao.getConnection();
+		ContaCorrente conta = new ContaCorrente();
+		String sql = "SELECT c.codigo, c.dataAbertura, c.saldo, c.agenciaCodigo, cc.limiteCredito FROM ContaCorrente cc INNER JOIN Conta c ON cc.contaCodigo = c.codigo WHERE c.codigo IN (SELECT contaCodigo FROM ContaCliente WHERE clienteCpf = ?)";
+		System.out.println("Pré prepereStatement");
+		PreparedStatement ps = c.prepareStatement(sql);
+		System.out.println("Pós prepereStatement");
+		ps.setString(1,cliente.getCpf());
+		ResultSet rs = ps.executeQuery();
+		System.out.println("Pós execute query");
+		if (rs.next()) {
+			conta.setCodigo(rs.getString("contaCodigo"));
+			conta.setDataAbertura(LocalDate.parse(rs.getString("dataAbertura")));
+			conta.setSaldo(Double.parseDouble(rs.getString("saldo")));
+			conta.setCodigoAgencia(rs.getLong("agenciaCodigo"));
+			conta.setLimiteCredito(rs.getDouble("limiteCredito"));
+			contas.add(conta);
+		}
+		rs.close();
+		ps.close();
+		return contas;
+	}
 	
 	public List<ContaCorrente> listar() throws SQLException, ClassNotFoundException {
 		List<ContaCorrente> contas = new ArrayList<ContaCorrente>();
@@ -48,7 +73,7 @@ public class ContaCorrenteDao {
 		ResultSet rs = ps.executeQuery();
 		if (rs.next()) {
 			ContaCorrente conta = new ContaCorrente();
-			conta.setCodigo(rs.getLong("contaCodigo"));
+			conta.setCodigo(rs.getString("contaCodigo"));
 			conta.setDataAbertura(LocalDate.parse(rs.getString("dataAbertura")));
 			conta.setSaldo(Double.parseDouble(rs.getString("saldo")));
 			conta.setCodigoAgencia(rs.getLong("agenciaCodigo"));
@@ -84,7 +109,7 @@ public class ContaCorrenteDao {
 		String sql = "{CALL sp_atualizar_conta(?,?,?,?,?)}";
 		CallableStatement cs = c.prepareCall(sql);
 		cs.setString(1, "Conta Corrente");
-		cs.setLong(2, conta.getCodigo());
+		cs.setString(2, conta.getCodigo());
 		cs.setDouble(3, conta.getSaldo());
 		cs.setDouble(4, conta.getLimiteCredito());
 		cs.registerOutParameter(5, Types.VARCHAR);
@@ -101,7 +126,7 @@ public class ContaCorrenteDao {
 		Connection c = gDao.getConnection();
 		String sql = "{CALL sp_excluir_conta(?,?,?)}";
 		CallableStatement cs = c.prepareCall(sql);
-		cs.setLong(1, conta.getCodigo());
+		cs.setString(1, conta.getCodigo());
 		cs.setString(2, "Conta Corrente");
 		cs.registerOutParameter(3, Types.VARCHAR);
 		cs.execute();

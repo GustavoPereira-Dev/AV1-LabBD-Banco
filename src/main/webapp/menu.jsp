@@ -13,6 +13,7 @@
 				<td><a href="index">INICIO</a></td>
 				<td><a href="${pageContext.request.contextPath}/autenticacao?auth=cadastro">CADASTRO</a></td>
 				<td><a href="${pageContext.request.contextPath}/autenticacao?auth=login">LOGIN</a></td>
+				<td><a href="${pageContext.request.contextPath}/agencia">AGENCIA</a></td>
 			</tr>
 		</table>
 	</div>

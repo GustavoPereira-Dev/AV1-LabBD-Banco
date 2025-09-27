@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class ContaPoupanca extends Conta {
 	
 	private double percentualRendimento;
-	private LocalDate diaAniversario;
+	private int diaAniversario;
 	
 }

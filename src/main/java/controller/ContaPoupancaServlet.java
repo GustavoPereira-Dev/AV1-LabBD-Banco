@@ -39,7 +39,7 @@ public class ContaPoupancaServlet extends HttpServlet {
 			// ContaPoupancaDao cpoDao = new ContaPoupancaDao(gDao);
 			// cpos = cpoDao.listar();
 			if (acao != null) {
-				cpo.setCodigo(Integer.parseInt(codigo));
+				cpo.setCodigo(codigo);
 				
 /*	private String cpf;
 	private String nome;
@@ -88,13 +88,13 @@ public class ContaPoupancaServlet extends HttpServlet {
 			cmd = request.getParameter("botao");
 			
 			if (!cmd.equalsIgnoreCase("Listar")) {
-				cpo.setCodigo(Integer.parseInt(codigo));
+				cpo.setCodigo(codigo);
 			}
 			if (cmd.equalsIgnoreCase("Inserir") || cmd.equalsIgnoreCase("Atualizar")) {
 				cpo.setDataAbertura(LocalDate.parse(dataAbertura));
 				cpo.setSaldo(Double.parseDouble(saldo));
 				cpo.setPercentualRendimento(Double.parseDouble(percentualRendimento));
-				cpo.setDiaAniversario(LocalDate.parse(diaAniversario));
+				cpo.setDiaAniversario(Integer.parseInt(diaAniversario));
 			}
 			
 			//GenericDao gDao = new GenericDao();

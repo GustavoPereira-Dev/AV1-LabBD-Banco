@@ -17,19 +17,19 @@
 		<table border="1">
 			<tr>
 				<td><a href="index">INICIO</a></td>
-				<td><a href="${pageContext.request.contextPath}/cliente?editar=true&usuario=${user}">ATUALIZAR CLIENTE</a></td>
-				<td><a href="${pageContext.request.contextPath}/conta?usuario=${user}">VISUALIZAR CONTAS</a></td>
+				<td><a href="${pageContext.request.contextPath}/cliente?editar=true&usuario=${usuario}">ATUALIZAR CLIENTE</a></td>
+				<td><a href="${pageContext.request.contextPath}/conta?usuario=${usuario}">VISUALIZAR CONTAS</a></td>
 			</tr>
 			<c:if test="${editar}">
 							<div class="conteiner" align="center">
 					<h1>Atualizar Cliente</h1>
 					<br />
-					<form action="pessoa" method="post">
+					<form action="cliente" method="post">
 						<table>
 							<tr>
 								<td colspan="3">
 									<input type="number" min="1" step="1"
-									id="cpf" name="cpf" placeholder="#CPF"
+									id="usuario" name="usuario" placeholder="#CPF"
 									value='<c:out value="${cliente.cpf}"/>'
 									class="input-group input-group-lg" >
 								</td>

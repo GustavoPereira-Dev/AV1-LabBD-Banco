@@ -12,6 +12,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Cliente;
+import model.Conta;
+import model.ContaCorrente;
+import persistence.ClienteDao;
+import persistence.GenericDao;
 
 @WebServlet("/autenticacao")
 public class AutenticacaoServlet extends HttpServlet {
@@ -25,8 +29,9 @@ public class AutenticacaoServlet extends HttpServlet {
 		String acao = request.getParameter("acao");
 		String cpf = request.getParameter("cpf");
 		String auth = request.getParameter("auth");
+		String teste = request.getParameter("horario-modal");
 		
-		System.out.println(auth);
+		System.out.println(teste + "123");
 		
 		Cliente cli = new Cliente();
 		String erro = "";
@@ -34,16 +39,12 @@ public class AutenticacaoServlet extends HttpServlet {
 		
 		try {
 			
-			// GenericDao gDao = new GenericDao();
-			// ClienteDao cliDao = new ClienteDao(gDao);
-			// clientes = cliDao.listar();
+			GenericDao gDao = new GenericDao();
+			ClienteDao cliDao = new ClienteDao(gDao);
+			
 			if (acao != null) {
 				cli.setCpf(cpf);
 				
-/*	private String cpf;
-	private String nome;
-	private LocalDate dataPrimeiraConta;
-	private String senha;*/
 				
 				if (acao.equalsIgnoreCase("excluir")) {
 					// cliDao.excluir(a);
@@ -76,52 +77,99 @@ public class AutenticacaoServlet extends HttpServlet {
 		List<Cliente> clientes = new ArrayList<Cliente>();
 		Cliente cli = new Cliente();
 		String cmd = "";
+		String formaAuth = request.getParameter("forma_auth");
+		RequestDispatcher dispatcher;
 		
-		
+		System.out.println("Auth: " + formaAuth);
 		try {
+			
 			String cpf = request.getParameter("cpf");
-			String nome = request.getParameter("nome");
-			String primeiraConta = request.getParameter("primeira_conta");
 			String senha = request.getParameter("senha");
-			cmd = request.getParameter("botao");
+			GenericDao gDao = new GenericDao();
+			ClienteDao cliDao = new ClienteDao(gDao);
 			
-			if (!cmd.equalsIgnoreCase("Listar")) {
-				cli.setCpf(cpf);
-			}
-			if (cmd.equalsIgnoreCase("Inserir") || cmd.equalsIgnoreCase("Atualizar")) {
-				cli.setNome(nome);
-				cli.setDataPrimeiraConta(LocalDate.parse(primeiraConta));
-				cli.setSenha(senha);
-			}
+			cli.setCpf(cpf);;
+			cli.setSenha(senha);
 			
-			//GenericDao gDao = new GenericDao();
-			//AgenciaDao cliDao = new ClienteDao(gDao);
-			
-			if (cmd.equalsIgnoreCase("Inserir")) {
-				//cliDao.inserir(cli);
-				//saida = "Cliente "+cli.getNome()+" inserido com sucesso";
-			}
-			if (cmd.equalsIgnoreCase("Atualizar")) {
-				//cliDao.atualizar(cli);
-				//saida = "Cliente "+cli.getNome()+" modifcado com sucesso";
-			}
-			if (cmd.equalsIgnoreCase("Excluir")) {
-				//cliDao.excluir(cli);
-				//saida = "Cliente "+cli.getCpf()+" excluida com sucesso";
-			}
-			if (cmd.equalsIgnoreCase("Buscar")) {
-				//cli = cliDao.buscar(cli);
-			}
-			if (cmd.equalsIgnoreCase("Listar")) {
-				//clientes = cliDao.listar();
-			}
+			if(formaAuth != null) {
+				
+				if(formaAuth.equals("cadastro")) {
+					Conta conta = new ContaCorrente();
+					
+					String nome = request.getParameter("nome");
+					String tipoConta = request.getParameter("tipo_conta");
+					String codAgencia = request.getParameter("cod_agencia");
+					
+					conta.setCodigoAgencia(Long.parseLong(codAgencia));
+					
+					cli.setNome(nome);
+					cli.setCpf(cpf);
+					
+					
+					System.out.println("Inicio Inserir");
+					
+					cliDao.inserir(cli, conta, tipoConta);
+					
+					System.out.println("Fim inserir");
+				} else {
+					cliDao.validarLogin(cli);
+				}
+				
+				System.out.println("AAAAAAAAAAAAAA");
+				request.setAttribute("usuario", cli.getCpf());
+				
 
+			} else {
+				
+				String nome = request.getParameter("nome");
+				String primeiraConta = request.getParameter("primeira_conta");
+			
+				cmd = request.getParameter("botao");
+				
+				if (!cmd.equalsIgnoreCase("Listar")) {
+					cli.setCpf(cpf);
+				}
+				if (cmd.equalsIgnoreCase("Inserir") || cmd.equalsIgnoreCase("Atualizar")) {
+					cli.setNome(nome);
+					cli.setDataPrimeiraConta(LocalDate.parse(primeiraConta));
+					cli.setSenha(senha);
+				}
+				
+
+				
+				if (cmd.equalsIgnoreCase("Inserir")) {
+					//cliDao.inserir(cli);
+					//saida = "Cliente "+cli.getNome()+" inserido com sucesso";
+				}
+				if (cmd.equalsIgnoreCase("Atualizar")) {
+					//cliDao.atualizar(cli);
+					//saida = "Cliente "+cli.getNome()+" modifcado com sucesso";
+				}
+				if (cmd.equalsIgnoreCase("Excluir")) {
+					//cliDao.excluir(cli);
+					//saida = "Cliente "+cli.getCpf()+" excluida com sucesso";
+				}
+				if (cmd.equalsIgnoreCase("Buscar")) {
+					//cli = cliDao.buscar(cli);
+				}
+				if (cmd.equalsIgnoreCase("Listar")) {
+					//clientes = cliDao.listar();
+				}
+			}
+			
+
+			dispatcher = request.getRequestDispatcher("cliente.jsp");
+			request.setAttribute("usuario", cli.getCpf());
+			
 		} catch (Exception e) {
 			saida = "";
 			erro = e.getMessage();
 			if (erro.contains("input string")) {
 				erro = "Preencha os campos corretamente";
 			}
+			
+			System.out.println("catch");
+			dispatcher = request.getRequestDispatcher("autenticacao.jsp");
 		} finally {
 			if (!cmd.equalsIgnoreCase("Buscar")) {
 				cli = null;
@@ -133,11 +181,14 @@ public class AutenticacaoServlet extends HttpServlet {
 			request.setAttribute("saida", saida);
 			request.setAttribute("cliente", cli);
 			request.setAttribute("clientes", clientes);
+			request.setAttribute("auth", formaAuth);
+			
 
-			RequestDispatcher dispatcher = 
-					request.getRequestDispatcher("autenticacao.jsp");
-			dispatcher.forward(request, response);
+			
 		}
+		
+		dispatcher.forward(request, response);
+		
 		
 	}
 

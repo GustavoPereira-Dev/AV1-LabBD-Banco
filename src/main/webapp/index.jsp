@@ -12,5 +12,6 @@
 		<h1>Avaliacao de Banco e Instituicoes</h1>
 		<jsp:include page="menu.jsp" />
 	</div>
+	
 </body>
 </html>

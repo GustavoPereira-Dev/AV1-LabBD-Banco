@@ -16,11 +16,11 @@
 	<div class="conteiner" align="center">
 		<h1>Cadastro de Agencias</h1>
 		<br />
-		<form action="pessoa" method="post">
+		<form action="agencia" method="post">
 			<table>
 				<tr>
 					<td colspan="3">
-						<input type="number" min="1" step="1"
+						<input type="number" value="0" step="1"
 						id="id" name="id" placeholder="#ID"
 						value='<c:out value="${agencia.codigo}"/>'
 						class="input-group input-group-lg" >
@@ -107,12 +107,12 @@
 				<tbody>
 					<c:forEach var="a" items="${agencias}">
 						<tr>
-							<td>${a.id}</td>
+							<td>${a.codigo}</td>
 							<td>${a.nome}</td>
 							<td>${a.cep}</td>
 							<td>${a.cidade}</td>
-							<td><a href="${pageContext.request.contextPath}/agencia?acao=editar&id=${a.id}">EDITAR</a></td>
-							<td><a href="${pageContext.request.contextPath}/agencia?acao=excluir&id=${a.id}">EXCLUIR</a></td>
+							<td><a href="${pageContext.request.contextPath}/agencia?acao=editar&codigo=${a.codigo}">EDITAR</a></td>
+							<td><a href="${pageContext.request.contextPath}/agencia?acao=excluir&codigo=${a.codigo}">EXCLUIR</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

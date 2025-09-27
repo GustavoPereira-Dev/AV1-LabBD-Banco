@@ -11,7 +11,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.Cliente;
 import model.ContaCorrente;
+import model.ContaPoupanca;
+import persistence.GenericDao;
+import persistence.ContaPoupancaDao;
+import persistence.ContaCorrenteDao;
 
 @WebServlet("/conta")
 public class ContaServlet extends HttpServlet {
@@ -23,54 +28,64 @@ public class ContaServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String acao = request.getParameter("acao");
+		String usuario = request.getParameter("usuario");
 		String codigo = request.getParameter("codigo");
 		
-		System.out.println("Teste");
+		GenericDao gDao = new GenericDao();
+		ContaCorrenteDao cDao = new ContaCorrenteDao(gDao);
+		ContaPoupancaDao pDao = new ContaPoupancaDao(gDao); 
 		
-		ContaCorrente cco = new ContaCorrente();
+		ContaCorrente c = new ContaCorrente();
+		ContaPoupanca p = new ContaPoupanca();
+		
 		String erro = "";
-		List<ContaCorrente> ccos = new ArrayList<>();
+		List<ContaCorrente> cs = new ArrayList<>();
+		List<ContaPoupanca> ps = new ArrayList<>();
+		
+		System.out.println("get conta");
+		System.out.println(usuario + " get usuario");
 		
 		try {
+			p.setCodigo(codigo);
+			c.setCodigo(codigo);
 			
-			// GenericDao gDao = new GenericDao();
-			// ContaCorrenteDao ccoDao = new ContaCorrenteDao(gDao);
+			System.out.println("codigo conta get " + codigo);
 			// contas = ccoDao.listar();
 			if (acao != null) {
-				cco.setCodigo(Integer.parseInt(codigo));
-				
-/*	private String cpf;
-	private String nome;
-	private LocalDate dataPrimeiraConta;
-	private String senha;*/
+				//cco.setCodigo(codigo);
 				
 				if (acao.equalsIgnoreCase("excluir")) {
 					// ccoDao.excluir(cco);
 					// ccos = ccoDao.listar();
-					cco = null;
+					c = null;
 				} else {
-					// cco = ccoDao.buscar(cco);
-					ccos = null;
+					c = cDao.buscar(c);
+					p = pDao.buscar(p);
+					cs = null;
+					ps = null;
 				}
 			}
 			
 			
 		} catch (Exception e) {
 			erro = e.getMessage();
+			System.out.println("catch conta get");
 		} finally {
-			cco = new ContaCorrente();
-			cco.setCodigo(1323133221);
-			cco.setCodigoAgencia(1);
-			cco.setDataAbertura(LocalDate.now());
-			cco.setLimiteCredito(21.21);
-			cco.setSaldo(21.21);
-			ccos.add(cco);
+//			cco = new ContaCorrente();
+//			cco.setCodigo(1323133221);
+//			cco.setCodigoAgencia(1);
+//			cco.setDataAbertura(LocalDate.now());
+//			cco.setLimiteCredito(21.21);
+//			cco.setSaldo(21.21);
+//			ccos.add(cco);
 			request.setAttribute("erro", erro);
-			request.setAttribute("conta_corrente", cco);
-			request.setAttribute("contas_correntes", ccos);
-			request.setAttribute("teste", "1234");
+			request.setAttribute("conta_corrente", c);
+			request.setAttribute("contas_correntes", cs);
+			request.setAttribute("conta_poupanca", p);
+			request.setAttribute("contas_poupancas", ps);
+			request.setAttribute("usuario", usuario);
 
-			System.out.println(ccos);
+			//System.out.println(ccos);
 			RequestDispatcher dispatcher = 
 					request.getRequestDispatcher("conta.jsp");
 			dispatcher.forward(request, response);
@@ -81,47 +96,90 @@ public class ContaServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String saida = "";
 		String erro = "";
-		List<ContaCorrente> ccos = new ArrayList<ContaCorrente>();
-		ContaCorrente cco = new ContaCorrente();
+		List<ContaPoupanca> ps = new ArrayList<ContaPoupanca>();
+		ContaPoupanca p = new ContaPoupanca();
+		
+		List<ContaCorrente> cs = new ArrayList<ContaCorrente>();
+		ContaCorrente c = new ContaCorrente();
+		Cliente cli = new Cliente();
+		
 		String cmd = "";
 		
+		GenericDao gDao = new GenericDao();
+		//ContaCorrenteDao cDao = new ContaCorrenteDao(gDao);
+		ContaPoupancaDao pDao = new ContaPoupancaDao(gDao); 
+		
+		String usuario = request.getParameter("usuario");
+		
+		System.out.println(usuario + " cpf parameter");
 		
 		try {
-			String codigo = request.getParameter("codigo");
+
 			String dataAbertura = request.getParameter("data_abertura");
 			String saldo = request.getParameter("saldo");
+			
 			String limiteCredito = request.getParameter("limite_credito");
+			String codigoAgencia = request.getParameter("codigo_agencia");
+			String cpfConjunto = request.getParameter("cpf_conjunto");
+			String percentualRendimento = request.getParameter("percentual_rendimento");
+			
+			String codigo = request.getParameter("codigo");
+			
+			cli.setCpf(usuario);
 			cmd = request.getParameter("botao");
 			
+			System.out.println(usuario + " codigo cpf");
 			if (!cmd.equalsIgnoreCase("Listar")) {
-				cco.setCodigo(Integer.parseInt(codigo));
+				cli.setCpf(usuario);
 			}
 			if (cmd.equalsIgnoreCase("Inserir") || cmd.equalsIgnoreCase("Atualizar")) {
-				cco.setDataAbertura(LocalDate.parse(dataAbertura));
-				cco.setSaldo(Double.parseDouble(saldo));
-				cco.setLimiteCredito(Double.parseDouble(limiteCredito));
+				//c.setDataAbertura(LocalDate.parse(dataAbertura));
+				c.setSaldo(Double.parseDouble(saldo));
+				p.setSaldo(Double.parseDouble(saldo));
+				//c.setLimiteCredito(Double.parseDouble(limiteCredito));
 			}
 			
 			//GenericDao gDao = new GenericDao();
 			//AgenciaDao ccoDao = new ContaCorrenteDao(gDao);
+			p.setCodigo(codigo);
+			c.setCodigo(codigo);
 			
 			if (cmd.equalsIgnoreCase("Inserir")) {
-				//ccoDao.inserir(cco);
-				//saida = "Conta "+cco.getCodigo()+" inserida com sucesso";
+				p.setCodigoAgencia(Long.parseLong(codigoAgencia));
+				//cDao.inserir(c);
+				pDao.inserir(p, cli, cpfConjunto);
+				saida = "Conta inserida com sucesso";
 			}
 			if (cmd.equalsIgnoreCase("Atualizar")) {
-				//ccoDao.atualizar(cco);
-				//saida = "Conta "+cco.getCodigo()+" modifcada com sucesso";
+				
+				p.setPercentualRendimento(Double.parseDouble(percentualRendimento));
+				
+				//cDao.atualizar(c);
+				//saida = "Conta "+c.getCodigo()+" modifcada com sucesso";
+				pDao.atualizar(p);
+				saida = "Conta "+p.getCodigo()+" modifcada com sucesso";
 			}
 			if (cmd.equalsIgnoreCase("Excluir")) {
-				//ccoDao.excluir(cco);
+				//cDao.excluir(c);
 				//saida = "Conta "+cco.getCodigo()+" excluida com sucesso";
+				pDao.excluir(p);
+				saida = "Conta "+p.getCodigo()+" excluida com sucesso";
+				
 			}
 			if (cmd.equalsIgnoreCase("Buscar")) {
-				//cco = ccoDao.buscar(cco);
+				p.setCodigo(codigo);
+				c.setCodigo(codigo);
+				//c = cDao.buscar(c);
+				p = pDao.buscar(p);
+				System.out.println(p + " Conta Poupanca");
 			}
+
 			if (cmd.equalsIgnoreCase("Listar")) {
-				//ccos = ccoDao.listar();
+				System.out.println("Listar cliente");
+				//cs = cDao.listar(cli);
+				ps = pDao.listar(cli);
+				System.out.println("DASDAASD");
+				System.out.println("Sem catch");
 			}
 
 		} catch (Exception e) {
@@ -130,17 +188,25 @@ public class ContaServlet extends HttpServlet {
 			if (erro.contains("input string")) {
 				erro = "Preencha os campos corretamente";
 			}
+			
+			System.out.println("catch");
 		} finally {
 			if (!cmd.equalsIgnoreCase("Buscar")) {
-				cco = null;
+				c = null;
+				p = null;
 			}
 			if (!cmd.equalsIgnoreCase("Listar")) {
-				ccos = null;
+				//cs = null;
+				//ps = null;
 			}
+			
 			request.setAttribute("erro", erro);
 			request.setAttribute("saida", saida);
-			request.setAttribute("conta_corrente", cco);
-			request.setAttribute("contas_correntes", ccos);
+			request.setAttribute("conta_corrente", c);
+			request.setAttribute("contas_correntes", cs);
+			request.setAttribute("conta_poupanca", p);
+			request.setAttribute("contas_poupancas", ps);
+			request.setAttribute("usuario", usuario);
 
 			RequestDispatcher dispatcher = 
 					request.getRequestDispatcher("conta.jsp");

@@ -15,47 +15,65 @@
 		
 		<p><c:out value="${auth}" /> </p>
 		<c:if test="${auth == 'login'}">
-		  <form>
+		  <form action="autenticacao" method="post" >
+		  	  <div class="mb-3">
+		        <input type="hidden" id="forma_auth" name="forma_auth" value="login" required>
+		      </div>
 		      <div class="mb-3">
 		        <label for="cpf" class="form-label">CPF</label>
-		        <input type="text" class="form-control" id="cpf" maxlength="11" required>
+		        <input type="text" class="form-control" id="cpf" name="cpf" maxlength="11" required>
 		      </div>
 		      <div class="mb-3">
 	          	<label for="senha" class="form-label">Senha</label>
-	            <input type="password" class="form-control" id="senha" maxlength="8" required>
+	            <input type="password" class="form-control" id="senha" name="senha" maxlength="8" required>
 	      	  </div>
 	      	  <button type="submit" class="btn btn-primary">Enviar</button>
 	      </form>
 		</c:if>
 		<c:if test="${auth == 'cadastro'}">
-		  <form>
+		  <form action="autenticacao" method="post">
+		  <div class="mb-3">
+		  	<input type="hidden" id="forma_auth" name="forma_auth" value="cadastro" required>
+		  </div>
 	      <div class="mb-3">
 	        <label for="cpf" class="form-label">CPF</label>
-	        <input type="text" class="form-control" id="cpf" maxlength="11" required>
+	        <input type="text" class="form-control" id="cpf" name="cpf" maxlength="11" required>
 	      </div>
 	      <div class="mb-3">
 	        <label for="nome" class="form-label">Nome</label>
-	        <input type="text" class="form-control" id="nome" maxlength="100" required>
+	        <input type="text" class="form-control" id="nome" name="nome" maxlength="100" required>
 	      </div>
 	      <div class="mb-3">
 	        <label for="senha" class="form-label">Senha</label>
-	        <input type="password" class="form-control" id="senha" maxlength="8" required>
-	      </div>
-	      <div class="mb-3">
-	        <label for="cpfConjunto" class="form-label">CPF do Conjunto</label>
-	        <input type="text" class="form-control" id="cpfConjunto" maxlength="11">
+	        <input type="password" class="form-control" id="senha" name="senha" maxlength="8" required>
 	      </div>
 	      <div class="mb-3">
 	        <label for="tipoConta" class="form-label">Tipo de Conta</label>
-	        <input type="text" class="form-control" id="tipoConta" maxlength="14">
+            <select id="tipo_conta" name="tipo_conta" required>
+              <option value="">Selecione um tipo</option>
+              <option value="Conta Corrente">Conta Corrente</option>
+              <option value="Conta Poupanca">Conta Poupanca</option>
+             </select>
 	      </div>
 	      <div class="mb-3">
 	        <label for="codAgencia" class="form-label">Código da Agência</label>
-	        <input type="number" class="form-control" id="codAgencia">
+	        <input type="number" class="form-control" id="cod_agencia" name="cod_agencia">
 	      </div>
 	      <button type="submit" class="btn btn-primary">Enviar</button>
 	    </form>
 	</c:if>
+	
+	<br />
+	<div class="conteiner" align="center">
+		<c:if test="${not empty saida}">
+			<h2 style="color: blue;"><c:out value="${saida}" /></h2>
+		</c:if>
+	</div>
+	<div class="conteiner" align="center">
+		<c:if test="${not empty erro}">
+			<h2 style="color: red;"><c:out value="${erro}" /></h2>
+		</c:if>
+	</div>
 	
 </body>
 </html>

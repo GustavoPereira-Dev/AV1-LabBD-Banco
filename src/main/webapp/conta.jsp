@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -18,11 +19,12 @@
 			<table>
 				<tr>
 					<td colspan="3">
-						<input type="number" min="1" step="1"
+						<input type="text"
 						id="codigo" name="codigo" placeholder="#ID"
 						value='<c:out value="${conta_corrente.codigo}"/>'
 						class="input-group input-group-lg" >
 					</td>
+				</tr>
 					<td colspan="1">
 						<input type="submit"
 						id="botao" name="botao" value="Buscar"
@@ -127,11 +129,21 @@
 			<table>
 				<tr>
 					<td colspan="3">
-						<input type="number" min="1" step="1"
+						<input type="text"
+						id="usuario" name="usuario" placeholder="#CPF"
+						value='<c:out value="${usuario}"/>'
+						class="input-group input-group-lg" >
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<input type="text"
 						id="codigo" name="codigo" placeholder="#ID"
 						value='<c:out value="${conta_poupanca.codigo}"/>'
 						class="input-group input-group-lg" >
 					</td>
+				</tr>
+				<tr>
 					<td colspan="1">
 						<input type="submit"
 						id="botao" name="botao" value="Buscar"
@@ -147,6 +159,14 @@
 					</td>
 				</tr>
 				<tr>
+					<td colspan="4">
+						<input type="number" 
+						id="codigo_agencia" name="codigo_agencia" placeholder="Codigo Agencia"
+						value='<c:out value="${conta_poupanca.codigoAgencia}"/>'
+						class="input-group input-group-lg">
+					</td>
+				</tr>
+				<tr>
 					<td colspan="3">
 						<input type="number"
 						id="saldo" name="saldo" step="0.01" placeholder="Saldo"
@@ -156,7 +176,7 @@
 				</tr>
 				<tr>
 					<td colspan="4">
-						<input type="date" 
+						<input type="number" 
 						id="dia_aniversario" name="dia_aniversario" placeholder="Dia Aniversario"
 						value='<c:out value="${conta_poupanca.diaAniversario}"/>'
 						class="input-group input-group-lg">
@@ -210,6 +230,7 @@
 					<tr>
 						<th>#CODIGO</th>
 						<th>Data de Abertura</th>
+						<th>Codigo Agencia</th>
 						<th>Saldo</th>
 						<th>Percentual de Rendimento</th>
 						<th>Dia de Aniversario</th>
@@ -222,21 +243,33 @@
 					<c:forEach var="po" items="${contas_poupancas}">
 						<tr>
 							<td>${po.codigo}</td>
-							<td>${cco.dataAbertura}</td>
-							<td>${cco.saldo}</td>
-							<td>${co.percentualRendimento}</td>
-							<td>${co.diaRendimento}</td>
+							<td>${po.dataAbertura}</td>
+							<td>${po.codigoAgencia}</td>
+							<td>${po.saldo}</td>
+							<td>${po.percentualRendimento}</td>
+							<td>${po.diaAniversario}</td>
 							<td>
-								<c:if test="${po.codigo % 10 < 9}"> true </c:if>   
-								<c:if test="${po.codigo % 10 > 9}"> false </c:if> 
+								<c:if test="${(Long.toString(po.codigoAgencia) + '999') <= po.codigo}"> nao </c:if>   
+								<c:if test="${(Long.toString(po.codigoAgencia) + '999') > po.codigo}"> sim </c:if> 
 							</td>
-							<td><a href="${pageContext.request.contextPath}/conta?usuario=${user}&acao=editar&id=${po.codigo}&tipo=corrente">EDITAR</a></td>
-							<td><a href="${pageContext.request.contextPath}/conta?usuario=${user}&acao=deletar&id=${po.codigo}&tipo=corrente">EXCLUIR</a></td>
+							<td><a href="${pageContext.request.contextPath}/conta?usuario=${user}&acao=editar&codigo=${po.codigo}&tipo=corrente">EDITAR</a></td>
+							<td><a href="${pageContext.request.contextPath}/conta?usuario=${user}&acao=deletar&codigo=${po.codigo}&tipo=corrente">EXCLUIR</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>
 			</table>
 		</c:if>
+		<br />
+		<div class="conteiner" align="center">
+			<c:if test="${not empty saida}">
+				<h2 style="color: blue;"><c:out value="${saida}" /></h2>
+			</c:if>
+		</div>
+		<div class="conteiner" align="center">
+			<c:if test="${not empty erro}">
+				<h2 style="color: red;"><c:out value="${erro}" /></h2>
+			</c:if>
+		</div>
 	</div>
 </body>
 </html>
