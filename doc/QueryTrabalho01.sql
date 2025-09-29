@@ -31,7 +31,7 @@ GO
 CREATE TABLE ContaPoupanca (
 contaCodigo				VARCHAR(20)		NOT NULL,
 percentualRendimento	DECIMAL(7,2)	NOT NULL,
-diaAniversario			TINYINT		    NOT NULL
+diaAniversario			INT	    NOT NULL
 PRIMARY KEY(contaCodigo)
 FOREIGN KEY(contaCodigo) REFERENCES Conta(codigo)
 )
@@ -337,38 +337,57 @@ AS
 		IF(@erro LIKE '%PRIMARY KEY%')
 			RAISERROR('Cliente ja existente!', 16, 1)
 		ELSE IF(@erro LIKE '%FOREIGN KEY%')
+		BEGIN
+			DELETE FROM Cliente WHERE cpf = @cpf
 			RAISERROR('Agencia inexistente!', 16, 1)
+		END
 		ELSE
 			RAISERROR(@erro, 16, 1)
 	END CATCH
 
 
 GO
-CREATE PROCEDURE sp_inserir_conta (@cpfTitular VARCHAR(11), @tipoConta VARCHAR(14), @codAgencia INT,
+CREATE ALTER PROCEDURE sp_inserir_conta (@cpfTitular VARCHAR(11), @tipoConta VARCHAR(14), @codAgencia INT,
 								   @cpfConjunto VARCHAR(11), @dataAbertura DATE, 
 								   @saida VARCHAR(100) OUTPUT) 
 AS
 
-	DECLARE @codConta VARCHAR(20)
+	DECLARE @codConta VARCHAR(20), @erro VARCHAR(MAX)
 
-	EXEC sp_gerar_codigo_conta @codAgencia, @cpfTitular, NULL, @codConta OUTPUT
+	EXEC sp_gerar_codigo_conta @codAgencia, @cpfTitular, @cpfConjunto, @codConta OUTPUT
 
-	INSERT INTO Conta (codigo, dataAbertura, saldo, agenciaCodigo) VALUES
-					  (@codConta, @dataAbertura, 0.0, @codAgencia)
+	BEGIN TRY
+		INSERT INTO Conta VALUES (@codConta, @dataAbertura, 0.0, @codAgencia);
+		INSERT INTO ContaCliente VALUES (@codConta, @cpfTitular);
+		
+		IF(LEN(@codConta) > LEN((CAST(@codAgencia AS VARCHAR(20))) + '1111')) 
+			INSERT INTO ContaCliente VALUES (@codConta, @cpfConjunto)
+
+	END TRY
+		BEGIN CATCH
+		SET @erro = ERROR_MESSAGE();
+
+		IF(@erro LIKE '%FOREIGN KEY%' AND @erro LIKE '%Agencia%')
+				RAISERROR('A agencia e inexistente no sistema!', 16, 1)
+		ELSE IF (@erro LIKE '%FOREIGN KEY%' AND @erro LIKE '%Cliente%')
+			RAISERROR('O CPF do outro cliente e inexistente!', 16, 1)
+		ELSE IF(@erro LIKE 'PRIMARY KEY%')
+			RAISERROR('Voce ja possui uma conta conjunta desse tipo na mesma agencia com o mesmo cliente!', 16, 1)
+		ELSE
+			RAISERROR(@erro, 16, 1)
+		RETURN
+
+	END CATCH
+
 
 	IF @tipoConta = 'Conta Corrente'
 	BEGIN
-		INSERT INTO ContaCorrente VALUES
-		(@codConta, 500.00)
+		INSERT INTO ContaCorrente VALUES (@codConta, 500.00)
 	END 
 	ELSE
 	BEGIN
-		INSERT INTO ContaPoupanca VALUES
-		(@codConta, 1.0, 10)
+		INSERT INTO ContaPoupanca VALUES (@codConta, 1.0, 10)
 	END
-
-	INSERT INTO ContaCliente VALUES
-	(@codConta, @cpfTitular)
 
 	SET @saida = @tipoConta + ' ' + CAST(@codConta AS VARCHAR(20)) + ' foi criada com sucesso.'
 
@@ -377,7 +396,7 @@ AS
 --senha para autorizar a inclusão de um cliente na conta conjunta.
 
 GO
-CREATE PROCEDURE sp_autorizar_cliente (@cpfLogin VARCHAR(11), @senha VARCHAR(8), @codConta VARCHAR(20), 
+CREATE PROCEDURE sp_conta_conjunta (@cpfLogin VARCHAR(11), @senha VARCHAR(8), @codConta VARCHAR(20), 
                                        @saldo DECIMAL(7,2), @dataAbertura DATE, @cpfConjunto VARCHAR(11), 
 									   @saida VARCHAR(100) OUTPUT) 
 AS
@@ -400,23 +419,14 @@ AS
 				RAISERROR('O cpf do outro cliente e inexistente no sistema!', 16, 1)
 			ELSE IF (@erro LIKE 'FOREIGN KEY')
 				RAISERROR('Voce ja possui uma conta conjunta com o cpf do outro cliente', 16, 1)
-
+			ELSE
+				RAISERROR(@erro, 16, 1)
 			RETURN
 
 		END CATCH
 	END
 	ELSE
 	BEGIN
-		/*
-		BEGIN TRY
-			EXEC sp_valida_cpf @cpfLogin, @valido OUTPUT
-			EXEC sp_valida_cpf @cpfConjunto, @valido OUTPUT
-		END TRY
-		BEGIN CATCH
-			RETURN
-		END CATCH
-		*/
-    
 		IF(@valido = 1)
 			RAISERROR('Não foi possível adicionar o cliente na conta conjunta, pois o saldo é igual a 0', 16, 1)
 			RETURN
@@ -573,3 +583,15 @@ SELECT c.codigo, c.dataAbertura, c.saldo, c.agenciaCodigo, p.percentualRendiment
 DECLARE @saida VARCHAR(100)
 EXEC sp_inserir_cliente
 
+CREATE PROCEDURE sp_teste
+AS
+	IF(LEN('') > LEN(CAST('21' AS VARCHAR(20))) + '1111')
+		PRINT('IF')
+	ELSE
+		PRINT('ELSE')
+
+EXEC sp_teste;
+
+
+PRINT(LEN('530781733'))
+PRINT(LEN((CAST('21' AS VARCHAR(20))) + '1111'))

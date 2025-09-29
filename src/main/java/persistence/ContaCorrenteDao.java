@@ -44,12 +44,9 @@ public class ContaCorrenteDao {
 		List<ContaCorrente> contas = new ArrayList<ContaCorrente>();
 		Connection c = gDao.getConnection();
 		String sql = "SELECT c.codigo, c.dataAbertura, c.saldo, c.agenciaCodigo, cc.limiteCredito FROM ContaCorrente cc INNER JOIN Conta c ON cc.contaCodigo = c.codigo WHERE c.codigo IN (SELECT contaCodigo FROM ContaCliente WHERE clienteCpf = ?)";
-		System.out.println("Pré prepereStatement");
 		PreparedStatement ps = c.prepareStatement(sql);
-		System.out.println("Pós prepereStatement");
 		ps.setString(1,cliente.getCpf());
 		ResultSet rs = ps.executeQuery();
-		System.out.println("Pós execute query");
 		while(rs.next()) {
 			ContaCorrente conta = new ContaCorrente();
 			conta.setCodigo(rs.getString("codigo"));

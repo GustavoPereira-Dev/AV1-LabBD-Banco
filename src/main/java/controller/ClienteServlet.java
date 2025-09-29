@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.tags.shaded.org.apache.xpath.operations.Bool;
+
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -32,6 +34,8 @@ public class ClienteServlet extends HttpServlet {
 		String acao = request.getParameter("acao");
 		String editar = request.getParameter("editar");
 		String usuario = request.getParameter("usuario");
+		String logout = request.getParameter("logout");
+		RequestDispatcher dispatcher;
 		
 		Cliente cli = new Cliente();
 		cli.setCpf(usuario);
@@ -46,33 +50,28 @@ public class ClienteServlet extends HttpServlet {
 		try {
 			
 			cli = cDao.buscar(cli);
-			// GenericDao gDao = new GenericDao();
-			// ClienteDao cliDao = new ClienteDao(gDao);
-			// clientes = cliDao.listar();
-//			if (acao != null) {
-//
-//				if (acao.equalsIgnoreCase("excluir")) {
-//					// cliDao.excluir(a);
-//					// clientes = cliDao.listar();
-//					cli = null;
-//				} else {
-//					// cli = aDao.buscar(cli);
-//					clientes = null;
-//				}
-//			}
-			
+
+			if(Boolean.parseBoolean(logout)) {
+				System.out.println("Redirect");
+				response.sendRedirect("./");
+				return;
+				
+			}
+			System.out.println("Eita...");
 			
 		} catch (Exception e) {
 			erro = e.getMessage();
 		} finally {
-			request.setAttribute("erro", erro);
-			request.setAttribute("cliente", cli);
-			request.setAttribute("editar", editar);
-			request.setAttribute("usuario", usuario);
-			
-			RequestDispatcher dispatcher = 
-					request.getRequestDispatcher("cliente.jsp");
-			dispatcher.forward(request, response);
+			if(!Boolean.parseBoolean(logout)){
+				request.setAttribute("erro", erro);
+				request.setAttribute("cliente", cli);
+				request.setAttribute("editar", editar);
+				request.setAttribute("usuario", usuario);
+				
+				dispatcher = 
+						request.getRequestDispatcher("cliente.jsp");
+				dispatcher.forward(request, response);
+			}
 
 		}
 	}

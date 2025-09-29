@@ -19,6 +19,7 @@
 				<td><a href="index">INICIO</a></td>
 				<td><a href="${pageContext.request.contextPath}/cliente?editar=true&usuario=${usuario}">ATUALIZAR CLIENTE</a></td>
 				<td><a href="${pageContext.request.contextPath}/conta?usuario=${usuario}">VISUALIZAR CONTAS</a></td>
+				<td><a href="${pageContext.request.contextPath}/cliente?logout=true">LOGOUT</a></td>
 			</tr>
 			<c:if test="${editar}">
 							<div class="conteiner" align="center">

@@ -20,22 +20,26 @@
 			<table>
 				<div class="mb-3" align="center">
 			    	<label for="codigo" class="form-label">Codigo da Agência</label>
-			    	<input type="text" class="form-control" id="codigo" name="codigo" required>
+			    	<input type="text" class="form-control" id="codigo" name="codigo" 
+			    	value='<c:out value="${agencia.codigo}"/>'>
 			    </div>
 			     
 			    <div class="mb-3" align="center">
 					<label for="nome" class="form-label">Nome da Agência</label>
-				 	<input type="text" class="form-control" id="nome" name="nome" maxlength="100" required>
+				 	<input type="text" class="form-control" id="nome" name="nome" maxlength="100" 
+				 	value='<c:out value="${agencia.nome}"/>'>
 				</div>
 				 
 				<div class="mb-3" align="center">
 			        <label for="nome" class="form-label">CEP</label>
-			        <input type="text" class="form-control" id="cep" name="cep" maxlength="8" required>
+			        <input type="text" class="form-control" id="cep" name="cep" maxlength="8" 
+			        value='<c:out value="${agencia.cep}"/>'>
 				</div>
 				 
 				<div class="mb-3" align="center">
 			    	<label for="cidade" class="form-label">Cidade da Agência</label>
-					<input type="text" class="form-control" id="cidade" name="cidade" maxlength="100" required>
+					<input type="text" class="form-control" id="cidade" name="cidade" maxlength="100" 
+					value='<c:out value="${agencia.cidade}"/>'>
 				</div>
 				<div class="mb-3" align="center">
 					<input type="submit" 

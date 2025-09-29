@@ -19,7 +19,7 @@
 			<table>
 				<tr>
 					<td colspan="3">
-						<input type="text"
+						<input type="hidden"
 						id="usuario" name="usuario" placeholder="#CPF"
 						value='<c:out value="${usuario}"/>'
 						class="input-group input-group-lg" >
@@ -32,13 +32,12 @@
 						value='<c:out value="${conta_corrente.codigo}"/>'
 						class="input-group input-group-lg" >
 					</td>
-				</tr>
 					<td colspan="1">
 						<input type="submit"
 						id="botao" name="botao" value="Buscar Corrente"
 						class="btn btn-dark">
-					</td>				
-				</tr>		
+					</td>	
+	
 				<tr>
 					<td colspan="4">
 						<input type="date" 
@@ -114,7 +113,6 @@
 						<th>Codigo Agencia</th>
 						<th>Saldo</th>
 						<th>Limite Credito</th>
-						<th>Conta Conjunta</th>
 						<th></th>
 						<th></th>
 					</tr>
@@ -131,8 +129,6 @@
 								<c:if test="${(Long.toString(co.codigoAgencia) + '999') <= co.codigo}"> nao </c:if>   
 								<c:if test="${(Long.toString(co.codigoAgencia) + '999') > co.codigo}"> sim </c:if> 
 							</td>
-							<td><a href="${pageContext.request.contextPath}/conta?usuario=${usuario}&acao=editar&codigo=${co.codigo}&tipo=corrente">EDITAR</a></td>
-							<td><a href="${pageContext.request.contextPath}/conta?usuario=${usuario}&acao=excluir&codigo=${co.codigo}&tipo=corrente">EXCLUIR</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>
@@ -147,7 +143,7 @@
 			<table>
 				<tr>
 					<td colspan="3">
-						<input type="text"
+						<input type="hidden"
 						id="usuario" name="usuario" placeholder="#CPF"
 						value='<c:out value="${usuario}"/>'
 						class="input-group input-group-lg" >
@@ -160,14 +156,12 @@
 						value='<c:out value="${conta_poupanca.codigo}"/>'
 						class="input-group input-group-lg" >
 					</td>
-				</tr>
-				<tr>
 					<td colspan="1">
 						<input type="submit"
 						id="botao" name="botao" value="Buscar Poupanca"
 						class="btn btn-dark">
-					</td>				
-				</tr>		
+					</td>
+				</tr>	
 				<tr>
 					<td colspan="4">
 						<input type="date" 
@@ -252,7 +246,6 @@
 						<th>Saldo</th>
 						<th>Percentual de Rendimento</th>
 						<th>Dia de Aniversario</th>
-						<th>Conta Conjunta</th>
 						<th></th>
 						<th></th>
 					</tr>
@@ -267,11 +260,9 @@
 							<td>${po.percentualRendimento}</td>
 							<td>${po.diaAniversario}</td>
 							<td>
-								<c:if test="${(Long.toString(po.codigoAgencia) + '999') <= po.codigo}"> nao </c:if>   
-								<c:if test="${(Long.toString(po.codigoAgencia) + '999') > po.codigo}"> sim </c:if> 
+								<c:if test="${(Long.toString(po.codigoAgencia) + '9999') >= po.codigo}"> nao </c:if>   
+								<c:if test="${(Long.toString(po.codigoAgencia) + '9999') < po.codigo}"> sim </c:if> 
 							</td>
-							<td><a href="${pageContext.request.contextPath}/conta?usuario=${usuario}&acao=editar&codigo=${po.codigo}&tipo=poupanca">EDITAR</a></td>
-							<td><a href="${pageContext.request.contextPath}/conta?usuario=${usuario}&acao=excluir&codigo=${po.codigo}&tipo=poupanca">EXCLUIR</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

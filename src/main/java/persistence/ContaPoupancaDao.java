@@ -102,6 +102,7 @@ public class ContaPoupancaDao{
 		cs.setString(2, "Conta Poupanca");
 		cs.setLong(3, conta.getCodigoAgencia());
 		System.out.println("CPF conjunto antes");
+		System.out.println(cpfConjunto);
 		cs.setString(4, cpfConjunto);
 		System.out.println("CPF conjunto depois");
 		cs.setString(5, LocalDate.now().toString());

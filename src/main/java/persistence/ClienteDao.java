@@ -77,7 +77,6 @@ public class ClienteDao {
 		cs.setString(3, cliente.getSenha());
 		cs.setString(4, tipoConta);
 		cs.setLong(5, conta.getCodigoAgencia());
-		System.out.println(conta.getCodigoAgencia());
 		cs.registerOutParameter(6, Types.VARCHAR);
 		cs.execute();
 		
@@ -105,13 +104,11 @@ public class ClienteDao {
 	public String excluir(Cliente cliente) throws SQLException, ClassNotFoundException {
 		Connection c = gDao.getConnection();
 		String sql = "{CALL sp_excluir_cliente(?,?)}";
-		System.out.println("DAO Excluir Cliente: " + cliente.getCpf());
 		CallableStatement cs = c.prepareCall(sql);
 		cs.setString(1, cliente.getCpf());
 		cs.registerOutParameter(2, Types.VARCHAR);
 		cs.execute();
 		
-		System.out.println("Fim DAO");
 		String saida = cs.getString(2);
 		cs.close();
 		

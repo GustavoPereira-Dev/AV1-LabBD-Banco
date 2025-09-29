@@ -48,10 +48,8 @@ public class ContaServlet extends HttpServlet {
 			
 
 			
-			System.out.println("codigo conta get " + codigo);
 			if (acao != null && tipo != null) {
 				
-				System.out.println(c.getCodigo() + " Codigo; " + " CPF " + usuario );
 				
 				if(tipo.equalsIgnoreCase("Poupanca")) p.setCodigo(codigo);
 				if(tipo.equalsIgnoreCase("Corrente")) c.setCodigo(codigo);
@@ -64,7 +62,6 @@ public class ContaServlet extends HttpServlet {
 					c = null;
 				} else {
 					
-					System.out.println(c.getCodigo() + " Codigo; " + " CPF " + usuario );
 					if(tipo.equalsIgnoreCase("Poupanca")) p = pDao.buscar(p);
 					if(tipo.equalsIgnoreCase("Corrente")) c = cDao.buscar(c);
 					cs = null;
@@ -75,15 +72,7 @@ public class ContaServlet extends HttpServlet {
 			
 		} catch (Exception e) {
 			erro = e.getMessage();
-			System.out.println("catch conta get");
 		} finally {
-//			cco = new ContaCorrente();
-//			cco.setCodigo(1323133221);
-//			cco.setCodigoAgencia(1);
-//			cco.setDataAbertura(LocalDate.now());
-//			cco.setLimiteCredito(21.21);
-//			cco.setSaldo(21.21);
-//			ccos.add(cco);
 			request.setAttribute("erro", erro);
 			request.setAttribute("conta_corrente", c);
 			request.setAttribute("contas_correntes", cs);
@@ -91,7 +80,6 @@ public class ContaServlet extends HttpServlet {
 			request.setAttribute("contas_poupancas", ps);
 			request.setAttribute("usuario", usuario);
 
-			//System.out.println(ccos);
 			RequestDispatcher dispatcher = 
 					request.getRequestDispatcher("conta.jsp");
 			dispatcher.forward(request, response);
@@ -117,8 +105,6 @@ public class ContaServlet extends HttpServlet {
 		
 		String usuario = request.getParameter("usuario");
 		
-		System.out.println(usuario + " cpf parameter");
-		
 		try {
 
 			String dataAbertura = request.getParameter("data_abertura");
@@ -134,7 +120,6 @@ public class ContaServlet extends HttpServlet {
 			cli.setCpf(usuario);
 			cmd = request.getParameter("botao");
 			
-			System.out.println(usuario + " codigo cpf");
 			if (!cmd.contains("Listar")) {
 				cli.setCpf(usuario);
 			}
@@ -213,7 +198,6 @@ public class ContaServlet extends HttpServlet {
 				erro = "Preencha os campos corretamente";
 			}
 			
-			System.out.println("catch");
 		} finally {
 			if (!cmd.contains("Buscar")) {
 				c = null;

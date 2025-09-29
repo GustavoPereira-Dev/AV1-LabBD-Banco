@@ -31,8 +31,6 @@ public class AutenticacaoServlet extends HttpServlet {
 		String auth = request.getParameter("auth");
 		String teste = request.getParameter("horario-modal");
 		
-		System.out.println(teste + "123");
-		
 		Cliente cli = new Cliente();
 		String erro = "";
 		List<Cliente> clientes = new ArrayList<>();
@@ -80,7 +78,6 @@ public class AutenticacaoServlet extends HttpServlet {
 		String formaAuth = request.getParameter("forma_auth");
 		RequestDispatcher dispatcher;
 		
-		System.out.println("Auth: " + formaAuth);
 		try {
 			
 			String cpf = request.getParameter("cpf");
@@ -106,16 +103,12 @@ public class AutenticacaoServlet extends HttpServlet {
 					cli.setCpf(cpf);
 					
 					
-					System.out.println("Inicio Inserir");
-					
 					cliDao.inserir(cli, conta, tipoConta);
 					
-					System.out.println("Fim inserir");
 				} else {
 					cliDao.validarLogin(cli);
 				}
 				
-				System.out.println("AAAAAAAAAAAAAA");
 				request.setAttribute("usuario", cli.getCpf());
 				
 
@@ -158,9 +151,8 @@ public class AutenticacaoServlet extends HttpServlet {
 			}
 			
 
-			dispatcher = request.getRequestDispatcher("cliente.jsp");
-			request.setAttribute("usuario", cli.getCpf());
-			
+			response.sendRedirect("./cliente?usuario=" + cli.getCpf());
+			return;
 		} catch (Exception e) {
 			saida = "";
 			erro = e.getMessage();
@@ -168,7 +160,6 @@ public class AutenticacaoServlet extends HttpServlet {
 				erro = "Preencha os campos corretamente";
 			}
 			
-			System.out.println("catch");
 			dispatcher = request.getRequestDispatcher("autenticacao.jsp");
 		} finally {
 			if (!cmd.equalsIgnoreCase("Buscar")) {

@@ -10,7 +10,7 @@
 	<div align="center">
 		<table border="1">
 			<tr>
-				<td><a href="index">INICIO</a></td>
+				<td><a href="${pageContext.request.contextPath}/index">INICIO</a></td>
 				<td><a href="${pageContext.request.contextPath}/autenticacao?auth=cadastro">CADASTRO</a></td>
 				<td><a href="${pageContext.request.contextPath}/autenticacao?auth=login">LOGIN</a></td>
 				<td><a href="${pageContext.request.contextPath}/agencia">AGENCIA</a></td>
