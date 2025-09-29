@@ -171,14 +171,14 @@ AS
 --atualizados.
 
 GO
-CREATE PROCEDURE sp_excluir_cliente (@cpf VARCHAR(11), @saida VARCHAR(100) OUTPUT) 
+CREATE ALTER PROCEDURE sp_excluir_cliente (@cpf VARCHAR(11), @saida VARCHAR(100) OUTPUT) 
 AS
 
 	DECLARE @possuiConjunta INT = (SELECT DISTINCT COUNT(cc2.clienteCpf)
 	FROM ContaCliente cc1
 	JOIN ContaCliente cc2
 	  ON cc1.contaCodigo = cc2.contaCodigo
-	WHERE cc1.clienteCpf = '64018991070' -- CPF do cliente que você quer verificar
+	WHERE cc1.clienteCpf = @cpf -- CPF do cliente que você quer verificar
 	  AND cc2.clienteCpf <> cc1.clienteCpf)
 
 	IF(@possuiConjunta > 0)
@@ -194,27 +194,27 @@ AS
         FROM Conta c
         JOIN ContaCliente cc ON cc.contaCodigo = c.codigo
         WHERE cc.clienteCpf = @cpf
-          AND CAST(c.codigo AS VARCHAR) LIKE '%' + RIGHT(@cpf, 3)
+          AND CAST(c.codigo AS VARCHAR) LIKE '%' + RIGHT(@cpf, 3) + '%'
     );
 
     -- Excluir de ContaCorrente
     DELETE FROM ContaCorrente
-    WHERE codigo IN (
+    WHERE contaCodigo IN (
         SELECT c.codigo
         FROM Conta c
         JOIN ContaCliente cc ON cc.contaCodigo = c.codigo
         WHERE cc.clienteCpf = @cpf
-          AND CAST(c.codigo AS VARCHAR) LIKE '%' + RIGHT(@cpf, 3)
+          AND CAST(c.codigo AS VARCHAR) LIKE '%' + RIGHT(@cpf, 3) + '%'
     );
 
     -- Excluir de ContaPoupanca
     DELETE FROM ContaPoupanca
-    WHERE codigo IN (
+    WHERE contaCodigo IN (
         SELECT c.codigo
         FROM Conta c
         JOIN ContaCliente cc ON cc.contaCodigo = c.codigo
-        WHERE cc.clienteCpf = @cpfCliente
-          AND CAST(c.codigo AS VARCHAR) LIKE '%' + RIGHT(@cpf, 3)
+        WHERE cc.clienteCpf = @cpf
+          AND CAST(c.codigo AS VARCHAR) LIKE '%' + RIGHT(@cpf, 3) + '%'
     );
 
     -- Excluir da Conta
@@ -223,12 +223,13 @@ AS
         SELECT c.codigo
         FROM Conta c
         JOIN ContaCliente cc ON cc.contaCodigo = c.codigo
-        WHERE cc.clienteCpf = @cpfCliente
-          AND CAST(c.codigo AS VARCHAR) LIKE '%' + RIGHT(@cpf, 3)
+        WHERE cc.clienteCpf = @cpf
+          AND CAST(c.codigo AS VARCHAR) LIKE '%' + RIGHT(@cpf, 3) + '%'
     );
 
 
 	SET @saida = 'Cliente ' + @cpf + ' foi excluído com sucesso.'
+
 
 GO
 CREATE PROCEDURE sp_atualizar_cliente (@cpf VARCHAR(11), @senha VARCHAR(8), @saida VARCHAR(100) OUTPUT) 
@@ -478,14 +479,14 @@ AS
 	SET @saida = 'Agência ' + CAST(@codigo AS VARCHAR(6)) + ' foi atualizada com sucesso.'
 
 GO
+
+
+
 CREATE PROCEDURE sp_excluir_conta (@codConta VARCHAR(20), @tipoConta VARCHAR(14), @saida VARCHAR(100) OUTPUT) 
 AS
 
 	DELETE FROM ContaCliente
 	WHERE contaCodigo = @codConta
-
-	DELETE FROM Conta
-	WHERE codigo = @codConta
 
 	IF @tipoConta = 'Conta Corrente'
 	BEGIN
@@ -498,7 +499,8 @@ AS
 		WHERE contaCodigo = @codConta
 	END
 
-
+	DELETE FROM Conta
+	WHERE codigo = @codConta
 
 	SET @saida = @tipoConta + ' ' + CAST(@codConta AS VARCHAR(20)) + ' foi excluída com sucesso.'
 
@@ -553,6 +555,8 @@ SELECT * FROM ContaCorrente;
 SELECT * FROM ContaPoupanca;
 SELECT * FROM ContaCliente;
 SELECT * FROM Agencia;
+
+SELECT c.codigo, c.dataAbertura, c.saldo, c.agenciaCodigo, p.percentualRendimento, p.diaAniversario FROM ContaP p INNER JOIN Conta c ON p.contaCodigo = c.codigo WHERE c.codigo IN (SELECT contaCodigo FROM ContaCliente WHERE contaCodigo = '210783')
 
 INSERT INTO Agencia VALUES(20, 'Teste2', '05322123', 'Sao Paulo')
 

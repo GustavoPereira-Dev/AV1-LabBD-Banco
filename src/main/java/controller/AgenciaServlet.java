@@ -85,6 +85,8 @@ public class AgenciaServlet extends HttpServlet {
 			String cidade = request.getParameter("cidade");
 			cmd = request.getParameter("botao");
 			
+			System.out.println("cmd");
+			
 			if (!cmd.equalsIgnoreCase("Listar")) {
 				a.setCodigo(Integer.parseInt(codigo));
 			}

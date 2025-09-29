@@ -20,6 +20,14 @@
 				<tr>
 					<td colspan="3">
 						<input type="text"
+						id="usuario" name="usuario" placeholder="#CPF"
+						value='<c:out value="${usuario}"/>'
+						class="input-group input-group-lg" >
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<input type="text"
 						id="codigo" name="codigo" placeholder="#ID"
 						value='<c:out value="${conta_corrente.codigo}"/>'
 						class="input-group input-group-lg" >
@@ -27,7 +35,7 @@
 				</tr>
 					<td colspan="1">
 						<input type="submit"
-						id="botao" name="botao" value="Buscar"
+						id="botao" name="botao" value="Buscar Corrente"
 						class="btn btn-dark">
 					</td>				
 				</tr>		
@@ -36,6 +44,14 @@
 						<input type="date" 
 						id="data_abertura" name="data_abertura" placeholder="Data Abertura"
 						value='<c:out value="${conta_corrente.dataAbertura}"/>'
+						class="input-group input-group-lg">
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<input type="number" 
+						id="codigo_agencia" name="codigo_agencia" placeholder="Codigo Agencia"
+						value='<c:out value="${conta_poupanca.codigoAgencia}"/>'
 						class="input-group input-group-lg">
 					</td>
 				</tr>
@@ -65,22 +81,22 @@
 				<tr>
 					<td>
 						<input type="submit"
-						id="botao" name="botao" value="Inserir"
+						id="botao" name="botao" value="Inserir Corrente"
 						class="btn btn-dark">
 					</td>								
 					<td>
 						<input type="submit"
-						id="botao" name="botao" value="Atualizar"
+						id="botao" name="botao" value="Atualizar Corrente"
 						class="btn btn-dark">
 					</td>								
 					<td>
 						<input type="submit"
-						id="botao" name="botao" value="Excluir"
+						id="botao" name="botao" value="Excluir Corrente"
 						class="btn btn-dark">
 					</td>								
 					<td>
 						<input type="submit"
-						id="botao" name="botao" value="Listar"
+						id="botao" name="botao" value="Listar Corrente"
 						class="btn btn-dark">
 					</td>								
 				</tr>
@@ -95,6 +111,7 @@
 					<tr>
 						<th>#CODIGO</th>
 						<th>Data de Abertura</th>
+						<th>Codigo Agencia</th>
 						<th>Saldo</th>
 						<th>Limite Credito</th>
 						<th>Conta Conjunta</th>
@@ -107,14 +124,15 @@
 						<tr>
 							<td>${co.codigo}</td>
 							<td>${co.dataAbertura}</td>
+							<td>${co.codigoAgencia}</td>
 							<td>${co.saldo}</td>
 							<td>${co.limiteCredito}</td>
 							<td>
-								<c:if test="${teste.length() > 8}"> true </c:if>   
-								<c:if test="${teste.length() < 8}"> false </c:if> 
+								<c:if test="${(Long.toString(co.codigoAgencia) + '999') <= co.codigo}"> nao </c:if>   
+								<c:if test="${(Long.toString(co.codigoAgencia) + '999') > co.codigo}"> sim </c:if> 
 							</td>
-							<td><a href="${pageContext.request.contextPath}/conta?usuario=${user}&acao=editar&id=${co.codigo}&tipo=corrente">EDITAR</a></td>
-							<td><a href="${pageContext.request.contextPath}/conta?usuario=${user}&acao=deletar&id=${co.codigo}&tipo=corrente">EXCLUIR</a></td>
+							<td><a href="${pageContext.request.contextPath}/conta?usuario=${usuario}&acao=editar&codigo=${co.codigo}&tipo=corrente">EDITAR</a></td>
+							<td><a href="${pageContext.request.contextPath}/conta?usuario=${usuario}&acao=excluir&codigo=${co.codigo}&tipo=corrente">EXCLUIR</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>
@@ -146,7 +164,7 @@
 				<tr>
 					<td colspan="1">
 						<input type="submit"
-						id="botao" name="botao" value="Buscar"
+						id="botao" name="botao" value="Buscar Poupanca"
 						class="btn btn-dark">
 					</td>				
 				</tr>		
@@ -200,22 +218,22 @@
 				<tr>
 					<td>
 						<input type="submit"
-						id="botao" name="botao" value="Inserir"
+						id="botao" name="botao" value="Inserir Poupanca"
 						class="btn btn-dark">
 					</td>								
 					<td>
 						<input type="submit"
-						id="botao" name="botao" value="Atualizar"
+						id="botao" name="botao" value="Atualizar Poupanca"
 						class="btn btn-dark">
 					</td>								
 					<td>
 						<input type="submit"
-						id="botao" name="botao" value="Excluir"
+						id="botao" name="botao" value="Excluir Poupanca"
 						class="btn btn-dark">
 					</td>								
 					<td>
 						<input type="submit"
-						id="botao" name="botao" value="Listar"
+						id="botao" name="botao" value="Listar Poupanca"
 						class="btn btn-dark">
 					</td>								
 				</tr>
@@ -252,8 +270,8 @@
 								<c:if test="${(Long.toString(po.codigoAgencia) + '999') <= po.codigo}"> nao </c:if>   
 								<c:if test="${(Long.toString(po.codigoAgencia) + '999') > po.codigo}"> sim </c:if> 
 							</td>
-							<td><a href="${pageContext.request.contextPath}/conta?usuario=${user}&acao=editar&codigo=${po.codigo}&tipo=corrente">EDITAR</a></td>
-							<td><a href="${pageContext.request.contextPath}/conta?usuario=${user}&acao=deletar&codigo=${po.codigo}&tipo=corrente">EXCLUIR</a></td>
+							<td><a href="${pageContext.request.contextPath}/conta?usuario=${usuario}&acao=editar&codigo=${po.codigo}&tipo=poupanca">EDITAR</a></td>
+							<td><a href="${pageContext.request.contextPath}/conta?usuario=${usuario}&acao=excluir&codigo=${po.codigo}&tipo=poupanca">EXCLUIR</a></td>
 						</tr>
 					</c:forEach>
 				</tbody>

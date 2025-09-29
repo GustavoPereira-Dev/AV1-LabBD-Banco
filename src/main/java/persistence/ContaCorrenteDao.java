@@ -24,7 +24,6 @@ public class ContaCorrenteDao {
 	
 	public ContaCorrente buscar(ContaCorrente conta) throws SQLException, ClassNotFoundException {
 		Connection c = gDao.getConnection();
-		// String sql = "SELECT contaCodigo, dataAbertura, saldo, agenciaCodigo, limiteCredito FROM ContaCorrente WHERE contaCodigo = ?";
 		String sql = "SELECT c.codigo, c.dataAbertura, c.saldo, c.agenciaCodigo, cc.limiteCredito FROM ContaCorrente cc INNER JOIN Conta c ON cc.contaCodigo = c.codigo WHERE c.codigo IN (SELECT contaCodigo FROM ContaCliente WHERE clienteCpf = ?)";
 		PreparedStatement ps = c.prepareStatement(sql);
 		ps.setString(1,conta.getCodigo());
@@ -32,7 +31,7 @@ public class ContaCorrenteDao {
 		if (rs.next()) {
 			conta.setCodigo(rs.getString("contaCodigo"));
 			conta.setDataAbertura(LocalDate.parse(rs.getString("dataAbertura")));
-			conta.setSaldo(Double.parseDouble(rs.getString("saldo")));
+			conta.setSaldo(rs.getDouble("saldo"));
 			conta.setCodigoAgencia(rs.getLong("agenciaCodigo"));
 			conta.setLimiteCredito(rs.getDouble("limiteCredito"));
 		}
@@ -44,7 +43,6 @@ public class ContaCorrenteDao {
 	public List<ContaCorrente> listar(Cliente cliente) throws SQLException, ClassNotFoundException {
 		List<ContaCorrente> contas = new ArrayList<ContaCorrente>();
 		Connection c = gDao.getConnection();
-		ContaCorrente conta = new ContaCorrente();
 		String sql = "SELECT c.codigo, c.dataAbertura, c.saldo, c.agenciaCodigo, cc.limiteCredito FROM ContaCorrente cc INNER JOIN Conta c ON cc.contaCodigo = c.codigo WHERE c.codigo IN (SELECT contaCodigo FROM ContaCliente WHERE clienteCpf = ?)";
 		System.out.println("Pré prepereStatement");
 		PreparedStatement ps = c.prepareStatement(sql);
@@ -52,11 +50,12 @@ public class ContaCorrenteDao {
 		ps.setString(1,cliente.getCpf());
 		ResultSet rs = ps.executeQuery();
 		System.out.println("Pós execute query");
-		if (rs.next()) {
-			conta.setCodigo(rs.getString("contaCodigo"));
+		while(rs.next()) {
+			ContaCorrente conta = new ContaCorrente();
+			conta.setCodigo(rs.getString("codigo"));
 			conta.setDataAbertura(LocalDate.parse(rs.getString("dataAbertura")));
-			conta.setSaldo(Double.parseDouble(rs.getString("saldo")));
 			conta.setCodigoAgencia(rs.getLong("agenciaCodigo"));
+			conta.setSaldo(Double.parseDouble(rs.getString("saldo")));
 			conta.setLimiteCredito(rs.getDouble("limiteCredito"));
 			contas.add(conta);
 		}
@@ -87,18 +86,17 @@ public class ContaCorrenteDao {
 
 	public String inserir(ContaCorrente conta, Cliente cliente, String cpfConjunto) throws SQLException, ClassNotFoundException {
 		Connection c = gDao.getConnection();
-		String sql = "{CALL sp_inserir_conta(?,?,?,?,?,?,?)}";
+		String sql = "{CALL sp_inserir_conta(?,?,?,?,?,?)}";
 		CallableStatement cs = c.prepareCall(sql);
 		cs.setString(1, cliente.getCpf());
-		cs.setString(2, cliente.getNome());
-		cs.setString(3, cliente.getSenha());
+		cs.setString(2, "Conta Corrente");
+		cs.setLong(3, conta.getCodigoAgencia());
 		cs.setString(4, cpfConjunto);
-		cs.setString(5, "Conta Corrente");
-		cs.setLong(6, conta.getCodigoAgencia());
-		cs.registerOutParameter(7, Types.VARCHAR);
+		cs.setString(5, LocalDate.now().toString());
+		cs.registerOutParameter(6, Types.VARCHAR);
 		cs.execute();
 		
-		String saida = cs.getString(7);
+		String saida = cs.getString(6);
 		cs.close();
 		
 		return saida;

@@ -44,7 +44,7 @@ public class AgenciaDao implements ICrud<Agencia> {
 		String sql = "SELECT codigo, nome, cep, cidade FROM Agencia";
 		PreparedStatement ps = c.prepareStatement(sql);
 		ResultSet rs = ps.executeQuery();
-		if (rs.next()) {
+		while(rs.next()) {
 			Agencia agencia = new Agencia();
 			agencia.setCodigo(rs.getLong("codigo"));
 			agencia.setNome(rs.getString("nome"));

@@ -14,7 +14,7 @@ import model.Cliente;
 import model.ContaCorrente;
 import model.ContaPoupanca;
 
-public class ContaPoupancaDao implements ICrud<ContaPoupanca> {
+public class ContaPoupancaDao{
 
 	private GenericDao gDao;
 
@@ -22,7 +22,6 @@ public class ContaPoupancaDao implements ICrud<ContaPoupanca> {
 		this.gDao = gDao;
 	}
 	
-	@Override
 	public ContaPoupanca buscar(ContaPoupanca conta) throws SQLException, ClassNotFoundException {
 		Connection c = gDao.getConnection();
 		String sql = "SELECT c.codigo, c.dataAbertura, c.saldo, c.agenciaCodigo, p.percentualRendimento, p.diaAniversario FROM ContaPoupanca p INNER JOIN Conta c ON p.contaCodigo = c.codigo WHERE c.codigo IN (SELECT contaCodigo FROM ContaCliente WHERE contaCodigo = ?)";
@@ -55,17 +54,11 @@ public class ContaPoupancaDao implements ICrud<ContaPoupanca> {
 		
 		ResultSet rs = ps.executeQuery();
 		while(rs.next()) {
-			
 			ContaPoupanca conta = new ContaPoupanca();
-			
-			
 			conta.setCodigo(rs.getString("codigo"));
 			conta.setDataAbertura(LocalDate.parse(rs.getString("dataAbertura")));
 			conta.setCodigoAgencia(rs.getLong("agenciaCodigo"));
 			conta.setSaldo(rs.getDouble("saldo"));
-			
-			
-			conta.setCodigoAgencia(rs.getLong("agenciaCodigo"));
 			conta.setPercentualRendimento(rs.getDouble("percentualRendimento"));
 			conta.setDiaAniversario(rs.getInt("diaAniversario"));
 			System.out.println("Teste daooo");
@@ -80,7 +73,6 @@ public class ContaPoupancaDao implements ICrud<ContaPoupanca> {
 //	@tipoConta VARCHAR(14), @codConta BIGINT, @saldo DECIMAL(7,2), 
 //    @atributoEspecifico DECIMAL(7,2), @saida VARCHAR(100) OUTPUT
     
-	@Override
 	public List<ContaPoupanca> listar() throws SQLException, ClassNotFoundException {
 		List<ContaPoupanca> contas = new ArrayList<ContaPoupanca>();
 		Connection c = gDao.getConnection();
@@ -100,12 +92,6 @@ public class ContaPoupancaDao implements ICrud<ContaPoupanca> {
 		rs.close();
 		ps.close();
 		return contas;
-	}
-
-	@Override
-	public String inserir(ContaPoupanca conta) throws SQLException, ClassNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 	public String inserir(ContaPoupanca conta, Cliente cliente, String cpfConjunto) throws SQLException, ClassNotFoundException {
@@ -151,6 +137,7 @@ public class ContaPoupancaDao implements ICrud<ContaPoupanca> {
 		Connection c = gDao.getConnection();
 		String sql = "{CALL sp_excluir_conta(?,?,?)}";
 		CallableStatement cs = c.prepareCall(sql);
+		System.out.println("código Conta Poupanca Dao excluir: " + conta.getCodigo());
 		cs.setString(1, conta.getCodigo());
 		cs.setString(2, "Conta Poupanca");
 		cs.registerOutParameter(3, Types.VARCHAR);

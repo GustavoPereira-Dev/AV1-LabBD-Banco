@@ -18,65 +18,42 @@
 		<br />
 		<form action="agencia" method="post">
 			<table>
-				<tr>
-					<td colspan="3">
-						<input type="number" value="0" step="1"
-						id="id" name="id" placeholder="#ID"
-						value='<c:out value="${agencia.codigo}"/>'
-						class="input-group input-group-lg" >
-					</td>
-					<td colspan="1">
-						<input type="submit"
-						id="botao" name="botao" value="Buscar"
-						class="btn btn-dark">
-					</td>				
-				</tr>		
-				<tr>
-					<td colspan="4">
-						<input type="text" 
-						id="nome" name="nome" placeholder="Nome"
-						value='<c:out value="${agencia.nome}"/>'
-						class="input-group input-group-lg">
-					</td>
-				</tr>
-				<tr>
-					<td colspan="4">
-						<input type="number" min="1" step="1" 
-						id="cep" name="cep" placeholder="CEP"
-						value='<c:out value="${agencia.cep}"/>'
-						class="input-group input-group-lg">
-					</td>
-				</tr>
-				<tr>
-					<td colspan="4">
-						<input type="text" 
-						id="cidade" name="cidade" placeholder="Cidade"
-						value='<c:out value="${agencia.cidade}"/>'
-						class="input-group input-group-lg">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<input type="submit"
-						id="botao" name="botao" value="Inserir"
-						class="btn btn-dark">
-					</td>								
-					<td>
-						<input type="submit"
-						id="botao" name="botao" value="Atualizar"
-						class="btn btn-dark">
-					</td>								
-					<td>
-						<input type="submit"
-						id="botao" name="botao" value="Excluir"
-						class="btn btn-dark">
-					</td>								
-					<td>
-						<input type="submit"
-						id="botao" name="botao" value="Listar"
-						class="btn btn-dark">
-					</td>								
-				</tr>
+				<div class="mb-3" align="center">
+			    	<label for="codigo" class="form-label">Codigo da Agência</label>
+			    	<input type="text" class="form-control" id="codigo" name="codigo" required>
+			    </div>
+			     
+			    <div class="mb-3" align="center">
+					<label for="nome" class="form-label">Nome da Agência</label>
+				 	<input type="text" class="form-control" id="nome" name="nome" maxlength="100" required>
+				</div>
+				 
+				<div class="mb-3" align="center">
+			        <label for="nome" class="form-label">CEP</label>
+			        <input type="text" class="form-control" id="cep" name="cep" maxlength="8" required>
+				</div>
+				 
+				<div class="mb-3" align="center">
+			    	<label for="cidade" class="form-label">Cidade da Agência</label>
+					<input type="text" class="form-control" id="cidade" name="cidade" maxlength="100" required>
+				</div>
+				<div class="mb-3" align="center">
+					<input type="submit" 
+					id="botao" name="botao" value="Inserir" 
+					class="btn btn-primary">
+					
+					<input type="submit" 
+					id="botao" name="botao" value="Atualizar" 
+					class="btn btn-primary">
+					
+					<input type="submit" 
+					id="botao" name="botao" value="Excluir" 
+					class="btn btn-primary">
+					
+					<input type="submit" 
+					id="botao" name="botao" value="Listar" 
+					class="btn btn-primary">
+				</div>
 			</table>
 		</form>
 	</div>
@@ -93,7 +70,7 @@
 	</div>
 	<div class="conteiner" align="center">
 		<c:if test="${not empty agencias}">
-			<table class="table table-dark table-striped">
+			<table class="table table-light table-striped">
 				<thead>
 					<tr>
 						<th>#ID</th>

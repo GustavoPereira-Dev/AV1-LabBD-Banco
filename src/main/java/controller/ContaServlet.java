@@ -30,6 +30,7 @@ public class ContaServlet extends HttpServlet {
 		String acao = request.getParameter("acao");
 		String usuario = request.getParameter("usuario");
 		String codigo = request.getParameter("codigo");
+		String tipo = request.getParameter("tipo");
 		
 		GenericDao gDao = new GenericDao();
 		ContaCorrenteDao cDao = new ContaCorrenteDao(gDao);
@@ -42,25 +43,30 @@ public class ContaServlet extends HttpServlet {
 		List<ContaCorrente> cs = new ArrayList<>();
 		List<ContaPoupanca> ps = new ArrayList<>();
 		
-		System.out.println("get conta");
-		System.out.println(usuario + " get usuario");
 		
 		try {
-			p.setCodigo(codigo);
-			c.setCodigo(codigo);
+			
+
 			
 			System.out.println("codigo conta get " + codigo);
-			// contas = ccoDao.listar();
-			if (acao != null) {
-				//cco.setCodigo(codigo);
+			if (acao != null && tipo != null) {
 				
-				if (acao.equalsIgnoreCase("excluir")) {
-					// ccoDao.excluir(cco);
-					// ccos = ccoDao.listar();
+				System.out.println(c.getCodigo() + " Codigo; " + " CPF " + usuario );
+				
+				if(tipo.equalsIgnoreCase("Poupanca")) p.setCodigo(codigo);
+				if(tipo.equalsIgnoreCase("Corrente")) c.setCodigo(codigo);
+				
+				if (acao.equalsIgnoreCase("Excluir")) {
+					
+					if(tipo.equalsIgnoreCase("Poupanca")) pDao.excluir(p);
+					if(tipo.equalsIgnoreCase("Corrente")) cDao.excluir(c);
+					p = null;
 					c = null;
 				} else {
-					c = cDao.buscar(c);
-					p = pDao.buscar(p);
+					
+					System.out.println(c.getCodigo() + " Codigo; " + " CPF " + usuario );
+					if(tipo.equalsIgnoreCase("Poupanca")) p = pDao.buscar(p);
+					if(tipo.equalsIgnoreCase("Corrente")) c = cDao.buscar(c);
 					cs = null;
 					ps = null;
 				}
@@ -106,7 +112,7 @@ public class ContaServlet extends HttpServlet {
 		String cmd = "";
 		
 		GenericDao gDao = new GenericDao();
-		//ContaCorrenteDao cDao = new ContaCorrenteDao(gDao);
+		ContaCorrenteDao cDao = new ContaCorrenteDao(gDao);
 		ContaPoupancaDao pDao = new ContaPoupancaDao(gDao); 
 		
 		String usuario = request.getParameter("usuario");
@@ -129,57 +135,75 @@ public class ContaServlet extends HttpServlet {
 			cmd = request.getParameter("botao");
 			
 			System.out.println(usuario + " codigo cpf");
-			if (!cmd.equalsIgnoreCase("Listar")) {
+			if (!cmd.contains("Listar")) {
 				cli.setCpf(usuario);
 			}
-			if (cmd.equalsIgnoreCase("Inserir") || cmd.equalsIgnoreCase("Atualizar")) {
-				//c.setDataAbertura(LocalDate.parse(dataAbertura));
-				c.setSaldo(Double.parseDouble(saldo));
-				p.setSaldo(Double.parseDouble(saldo));
-				//c.setLimiteCredito(Double.parseDouble(limiteCredito));
+			if (cmd.contains("Inserir") || cmd.contains("Atualizar")) {
+
+				if(cmd.contains("Poupanca")) p.setSaldo(Double.parseDouble(saldo));		
+				if(cmd.contains("Corrente")) p.setSaldo(Double.parseDouble(saldo));		
+				
 			}
 			
-			//GenericDao gDao = new GenericDao();
-			//AgenciaDao ccoDao = new ContaCorrenteDao(gDao);
-			p.setCodigo(codigo);
-			c.setCodigo(codigo);
+			if(cmd.contains("Poupanca")) p.setCodigo(codigo);
+			if(cmd.contains("Corrente")) c.setCodigo(codigo);
 			
-			if (cmd.equalsIgnoreCase("Inserir")) {
-				p.setCodigoAgencia(Long.parseLong(codigoAgencia));
-				//cDao.inserir(c);
-				pDao.inserir(p, cli, cpfConjunto);
+			if (cmd.contains("Inserir")) {
+				
+				if(cmd.contains("Poupanca")) {
+					p.setCodigoAgencia(Long.parseLong(codigoAgencia));
+					pDao.inserir(p, cli, cpfConjunto);
+				} else {
+					c.setCodigoAgencia(Long.parseLong(codigoAgencia));
+					cDao.inserir(c, cli, cpfConjunto);
+				}
+				
 				saida = "Conta inserida com sucesso";
 			}
-			if (cmd.equalsIgnoreCase("Atualizar")) {
+			if (cmd.contains("Atualizar")) {
 				
-				p.setPercentualRendimento(Double.parseDouble(percentualRendimento));
+				if(cmd.contains("Poupanca")) {
+					p.setPercentualRendimento(Double.parseDouble(percentualRendimento));
+					pDao.atualizar(p);
+					saida = "Conta "+p.getCodigo()+" modifcada com sucesso";
+				} else {
+					c.setLimiteCredito(Double.parseDouble(limiteCredito));
+					cDao.atualizar(c);
+					saida = "Conta "+c.getCodigo()+" modifcada com sucesso";
+				}
 				
-				//cDao.atualizar(c);
-				//saida = "Conta "+c.getCodigo()+" modifcada com sucesso";
-				pDao.atualizar(p);
 				saida = "Conta "+p.getCodigo()+" modifcada com sucesso";
 			}
-			if (cmd.equalsIgnoreCase("Excluir")) {
-				//cDao.excluir(c);
-				//saida = "Conta "+cco.getCodigo()+" excluida com sucesso";
-				pDao.excluir(p);
-				saida = "Conta "+p.getCodigo()+" excluida com sucesso";
+			if (cmd.contains("Excluir")) {
+				
+				if(cmd.contains("Poupanca")) {
+					pDao.excluir(p);
+					saida = "Conta "+p.getCodigo()+" excluida com sucesso";
+				} else {
+					cDao.excluir(c);
+					saida = "Conta "+c.getCodigo()+" excluida com sucesso";
+				}
 				
 			}
-			if (cmd.equalsIgnoreCase("Buscar")) {
-				p.setCodigo(codigo);
-				c.setCodigo(codigo);
-				//c = cDao.buscar(c);
-				p = pDao.buscar(p);
-				System.out.println(p + " Conta Poupanca");
+			if (cmd.contains("Buscar")) {
+				
+				if(cmd.contains("Poupanca")) {
+					p.setCodigo(codigo);
+					p = pDao.buscar(p);
+				} else {
+					p.setCodigo(codigo);
+					p = pDao.buscar(p);
+				}
 			}
 
-			if (cmd.equalsIgnoreCase("Listar")) {
-				System.out.println("Listar cliente");
-				//cs = cDao.listar(cli);
-				ps = pDao.listar(cli);
-				System.out.println("DASDAASD");
-				System.out.println("Sem catch");
+			if (cmd.contains("Listar")) {
+				
+				if(cmd.contains("Poupanca")) {
+					ps = pDao.listar(cli);
+				} else {
+					cs = cDao.listar(cli);
+				}
+
 			}
 
 		} catch (Exception e) {
@@ -191,13 +215,13 @@ public class ContaServlet extends HttpServlet {
 			
 			System.out.println("catch");
 		} finally {
-			if (!cmd.equalsIgnoreCase("Buscar")) {
+			if (!cmd.contains("Buscar")) {
 				c = null;
 				p = null;
 			}
-			if (!cmd.equalsIgnoreCase("Listar")) {
-				//cs = null;
-				//ps = null;
+			if (!cmd.contains("Listar")) {
+				cs = null;
+				ps = null;
 			}
 			
 			request.setAttribute("erro", erro);
